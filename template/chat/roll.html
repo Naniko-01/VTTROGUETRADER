@@ -1,0 +1,118 @@
+<div class="rogue-trader chat roll" data-actor-id="{{ownerId}}" data-item-id="{{itemId}}" {{#if tokenId}}data-token-id="{{tokenId}}"{{/if}}>
+    <div class="background border">
+        {{#if isReRoll}}
+            <h1>{{localize "CHAT.REROLL"}}</h1>
+        {{/if}}
+        {{# unless weaponTraits.skipAttackRoll}}
+            <h1>{{name}} ({{target}})</h1>
+            {{#if isSuccess}}
+                <h3><span style="color: var(--color-success)">{{localize "CHAT.SUCCESS"}}</span> ({{result}})</h3>
+            {{else}}
+                <h3><span style="color: var(--color-failure)">{{localize "CHAT.FAILURE"}}</span> ({{result}})</h3>
+            {{/if}}
+            {{#if protectionRating}}
+                <p><strong>{{localize "FORCE_FIELD.PROTECTION_RATING"}}:</strong> {{protectionRating}}</p>
+            {{/if}}
+
+            {{#if isOverload}}
+                <h3><span style="color: var(--color-failure)">{{localize "CHAT.OVERLOAD"}}</span></h3>
+            {{/if}}
+
+            {{#if modifier}}
+                <p><strong>{{localize "CHAT.TEST_MODIFIER"}}:</strong> {{modifier}}</p>
+            {{/if}}
+
+            {{#if rolledWith}}
+                <p><strong>{{localize "CHAT.ROLLED_WITH"}}:</strong> {{rolledWith}}</p>
+            {{/if}}
+
+            {{#if aim}}
+                <p><strong>{{localize "CHAT.AIMING"}}:</strong> {{aim.text}}</p>
+            {{/if}}
+            {{#if rangeText}}
+                <p><strong>{{localize "CHAT.ATTACK_RANGE"}}:</strong> {{rangeText}}</p>
+            {{/if}}
+
+            {{#if attackType}}
+                <p><strong>{{localize "CHAT.ATTACK_TYPE"}}:</strong> {{attackType.text}}</p>
+            {{/if}}
+
+            {{#if isSuccess}}
+                {{#if showDoS}}
+                    <p><strong>{{localize "CHAT.DOS"}}:</strong> {{dos}}</p>
+                    {{#if numberOfHit}}
+                        <p><strong>{{localize "CHAT.NUMBER_OF_HIT"}}:</strong> {{numberOfHit}}</p>
+                    {{/if}}
+                    {{#if showTotalDamage}}
+                        <p><strong>{{localize "CHAT.DAMAGE_TOTAL"}}:</strong> <span class="damage-total">{{salvoTotal}}</span></p>
+                    {{/if}}
+                    {{#if isCritical}}
+                        <h3></h3>
+                        <p><strong>{{localize "CHAT.CRITICAL_HIT"}}</strong></p>
+                    {{/if}}
+                {{/if}}
+            {{else}}
+                {{#if showDoS}}
+                    <p><strong>{{localize "CHAT.DOF"}}:</strong> {{dof}}</p>
+                {{/if}}
+            {{/if}}
+            {{#if psy.display}}
+                {{#if (eq psy.psyStrength "push")}}
+                <p><strong>{{localize "CHAT.PSY_RATING"}}:</strong> {{psy.value}} ({{localize "CHAT.PSY_PUSH"}})</p>
+                {{else}}
+                <p><strong>{{localize "CHAT.PSY_RATING"}}:</strong> {{psy.value}}</p>
+                {{/if}}
+                {{#if psy.hasPhenomena}}
+                    {{#if psy.warpConduit}}
+                        <p><strong style="color: var(--color-failure)">{{localize "CHAT.HAS_PSYCHIC_PHENOMENA_WITH_WARPCONDUIT"}}</strong></p>
+                    {{else}}
+                        <p><strong style="color: var(--color-failure)">{{localize "CHAT.HAS_PSYCHIC_PHENOMENA"}}</strong></p>
+                    {{/if}}
+                {{/if}}
+            {{/if}}
+            {{#if weaponSpecial}}
+                <p><strong>{{localize "CHAT.WEAPON_TRAITS"}}: </strong>{{weaponSpecial}}</p>
+            {{/if}}
+        {{else}}
+            <h1>{{name}}</h1>
+        {{/unless}}
+        {{#each damages as |damage|}}
+            {{#if hasLocation}}
+            <h3 class="separator damage-location" data-location={{location}}>{{localize location}}</h3>
+            {{else}}
+            <h3></h3>
+            {{/if}}
+            <div>
+                <p><strong>{{localize "CHAT.DAMAGE"}}:</strong> <span class="damage-total">{{damage.total}}</span> 
+                   <strong class="damage-type">{{damageTypeShort ../damageType}}</strong>
+                </p>
+            </div>
+            {{#unless damage.hidePenetration}}
+                <p><strong>{{localize "CHAT.PENETRATION"}}:</strong> <span class="damage-penetration">{{penetration}}</span></p>
+            {{/unless}}
+            {{#if damage.righteousFury}}
+                <p><strong>{{localize "CHAT.RIGHTEOUS_FURY"}}:</strong> <span class="damage-righteous-fury">{{damage.righteousFury}}</span></p>
+            {{/if}}
+        {{/each}}
+    </div>
+    
+    <div class="dice-rolls" style="display:none">
+        {{# unless weaponTraits.skipAttackRoll}}
+            <div class="dice-roll-render">
+                {{{render}}}
+            </div>
+        {{/unless}}
+        {{#each damages as |damage|}}
+            <p><strong>{{localize "CHAT.DAMAGE_HEADER"}}</strong></p>
+            <div class="dice-roll-render">
+                {{{damage.damageRender}}}
+            </div>
+            {{#if damage.accurateRender}}
+                <p><strong>{{localize "CHAT.ACCURATE_HEADER"}}</strong></p>
+                <div class="dice-roll-render">
+                    {{{damage.accurateRender}}}
+                </div>
+            {{/if}}
+        {{/each}}
+    </div>
+</div>

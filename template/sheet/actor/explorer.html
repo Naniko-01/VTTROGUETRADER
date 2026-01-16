@@ -1,0 +1,87 @@
+<form class="{{cssClass}}" autocomplete="off">
+    <div class="explorer">
+        <div class="header border">
+            <div class="flex row">
+                <div class="avatar">
+                    <img class="profile-img" src="{{actor.img}}" data-edit="img" title="{{actor.name}}" />
+                </div>
+                <div class="flex column grow">
+                    <div class="name header-row">
+                        <label>{{localize "BIO.NAME"}}</label>
+                        <input name="name" type="text" value="{{actor.name}}" />
+                    </div>
+                    <div class="header-row">
+                        <div class="career">
+                            <label>{{localize "BIO.CAREER"}}</label>
+                            <input style="margin-left: 43px" name="system.bio.career" type="text" value="{{system.bio.career}}" />
+                        </div>
+                        <div class="rank">
+                            <label>{{localize "BIO.RANK"}}</label>
+                            <input style="margin-left: 35px" name="system.bio.rank" type="text" value="{{system.bio.rank}}" disabled />
+                        </div>
+                        <div class="fate">
+                            <label>{{localize "FATE"}}</label>
+                            <input style="margin-left: 20px" name="system.fate.value" type="number" value="{{system.fate.value}}" data-dtype="Number" />
+                            /
+                            <input name="system.fate.max" type="number" value="{{system.fate.max}}" data-dtype="Number" />
+                        </div>
+                    </div>
+                    <div class="header-row">
+                        <!-- <div class="birthright">
+                            <label>{{localize "BIO.BIRTHRIGHT"}}</label>
+                            <input style="margin-left: 18px" name="system.bio.birthright" type="text" value="{{system.bio.birthright}}" />
+                        </div> -->
+                        <div class="home-world">
+                            <label>{{localize "BIO.HOME_WORLD"}}</label>
+                            <input name="system.bio.homeWorld" type="text" value="{{system.bio.homeWorld}}" />
+                        </div>
+                        <div class="motivation">
+                            <label>{{localize "BIO.MOTIVATION"}}</label>
+                            <input name="system.bio.motivation" type="text" value="{{system.bio.motivation}}" />
+                        </div>
+                        <div class="fatigue">
+                            <label>{{localize "FATIGUE"}}</label>
+                            <input name="system.fatigue.value" type="number" value="{{system.fatigue.value}}" data-dtype="Number" />
+                            /
+                            <input name="system.fatigue.max" type="number" value="{{system.fatigue.max}}" data-dtype="Number" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="sheet-tabs tabs flex row" data-group="primary">
+            <b class="item" data-tab="stats">{{localize "TAB.STATS"}}</b>
+            <b class="item" data-tab="combat">{{localize "TAB.COMBAT"}}</b>
+            <b class="item" data-tab="abilities">{{localize "TAB.ABILITIES"}}</b>
+            <b class="item" data-tab="psychic-powers">{{localize "TAB.PSYCHIC_POWERS"}}</b>
+            <b class="item" data-tab="gear">{{localize "TAB.GEAR"}}</b>
+            <b class="item" data-tab="progression">{{localize "TAB.ADVANCES"}}</b>
+            <b class="item" data-tab="notes">{{localize "TAB.NOTES"}}</b>
+        </div>
+
+        <div class="sheet-body">
+            <div class="tab" data-group="primary" data-tab="stats">
+                {{> systems/rogue-trader/template/sheet/actor/tab/stats.html}}
+            </div>
+            <div class="tab" data-group="primary" data-tab="combat">
+                {{> systems/rogue-trader/template/sheet/actor/tab/combat.html}}
+            </div>
+            <div class="tab" data-group="primary" data-tab="abilities">
+                {{> systems/rogue-trader/template/sheet/actor/tab/abilities.html}}
+            </div>
+            <div class="tab" data-group="primary" data-tab="psychic-powers">
+                {{> systems/rogue-trader/template/sheet/actor/tab/psychic-powers.html}}
+            </div>
+            <div class="tab" data-group="primary" data-tab="gear">
+                {{> systems/rogue-trader/template/sheet/actor/tab/gear.html}}
+            </div>
+            <div class="tab" data-group="primary" data-tab="progression">
+                {{> systems/rogue-trader/template/sheet/actor/tab/progression.html}}
+            </div>
+            <div class="tab" data-group="primary" data-tab="notes">
+                {{> systems/rogue-trader/template/sheet/actor/tab/notes.html}}
+            </div>
+        </div>
+    </div>
+</form>

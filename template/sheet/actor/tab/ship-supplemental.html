@@ -1,0 +1,41 @@
+<div class="flex wrap gear">
+    <div class="all-gear border">
+        <h1>{{localize "TITLE.EQUIPMENT"}}</h1>
+        <div class="item-list">
+            <div class="border">
+                <div class="flex header">
+                    <b class="name">{{localize "SHIP_ITEM.HEADER"}}</b>
+                    <b class="class">{{localize "SHIP_ITEM.CLASS"}}</b>
+                    <b class="power">{{localize "SHIP_ITEM.POWER"}}</b>
+                    <b class="space">{{localize "SHIP_ITEM.SPACE"}}</b>
+                    <b class="points">{{localize "SHIP_ITEM.POINTS"}}</b>
+                    <b class="button-column"> </b>
+                </div>
+            </div>
+            <div class="space"></div>
+            <div class="border">
+                <div class="flex items item-list weapons">
+                    {{#each items.supplemental as |item|}}
+                        <div class="weapon item flex row" data-item-id="{{item.id}}">
+                            <div class="flex name item-edit">
+                                <div class="image-container">
+                                    <div class="image" style="background-image: url('{{item.img}}')"></div>
+                                </div>
+                                <div>{{item.name}}</div>
+                            </div>
+                            <div class="class">{{item.ShipComponentClass}}</div>
+                            <div class="power">{{item.power}}</div>
+                            <div class="space">{{item.space}}</div>
+                            <div class="points">
+                                {{item.shipPoints}}
+                            </div>
+                            <div class="button button-column">
+                                <a class="item-control item-delete" title="Delete Weapon"><i class="fas fa-trash"></i></a>
+                            </div>
+                        </div>
+                    {{/each}}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

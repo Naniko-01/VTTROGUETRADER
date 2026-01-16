@@ -1,0 +1,18 @@
+<div class="rogue-trader dialog">
+    <div class="flex row wrap background border" style="flex-basis: 100%;margin-bottom: 5px">
+        <h1>{{localize name}}</h1>
+        <div class="wrapper">
+            <label>{{localize "FORCE_FIELD.PROTECTION_RATING"}}</label>
+            <input id="target" type="number" value="{{protectionRating}}" data-dtype="Number"/>
+        </div>
+        <div class="wrapper">
+            <label>{{localize "FORCE_FIELD.OVERLOAD_CHANCE"}}</label>
+            <input id="overload" type="number" value="{{overloadChance}}" data-dtype="Number"/>
+        </div>
+    </div>
+</div>
+<script>
+    $(".wrapper input").focusin(function () {
+        $(this).select();
+    });
+</script>

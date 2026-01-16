@@ -1,0 +1,260 @@
+<div class="tab">
+    <div class="stats border">
+        <div class="stats flex border">
+            <div class="stats flex row">
+                <div class="stat crewSkill">
+                    <label>{{localize "SHIP.CREW_SKILL"}}</label>
+                    <select name="system.crewSkill">
+                        {{#select system.crewSkill}}
+                            <option value="incompetent">{{localize "SHIP.CREW_INCOMPETENT"}}</option>
+                            <option value="competent">{{localize "SHIP.CREW_COMPETENT"}}</option>
+                            <option value="crack">{{localize "SHIP.CREW_CRACK"}}</option>
+                            <option value="veteran">{{localize "SHIP.CREW_VETERAN"}}</option>
+                            <option value="elite">{{localize "SHIP.CREW_ELITE"}}</option>
+                        {{/select}}
+                    </select>
+                </div>
+            </div>
+        </div>
+        <h1>{{localize "TITLE.CREW_RANK_ONE"}}</h1>
+        <div class="crew flex border">
+            <div class="crew flex column">
+                <div class="stat border rank1" data-crewRole="captain">
+                    <div class="avatar" data-crewRole="captain">
+                        {{#if system.namedCrew.lordCaptain}}
+                            <img class="crew-img-captain" src="{{actor.lordCaptain.img}}" title="{{actor.lordCaptain.name}}" data-crewRole="captain">
+                        {{else}}
+                            <img class="crew-img-captain" src="icons/svg/mystery-man.svg" title="Lord Captain" data-crewRole="captain">
+                        {{/if}}
+                    </div>
+                    <label>{{localize "SHIP.NAMED_CREW.LORD_CAPTAIN"}}</label>
+                </div>
+            </div>
+        </div>
+        <h1>{{localize "TITLE.CREW_RANK_TWO"}}</h1>
+        <div class="crew flex border">
+            <div class="crew flex row">
+                <div class="stat border rank2" data-crewRole="firstOfficer">
+                    <div class="avatar" data-crewRole="firstOfficer">
+                        {{#if system.namedCrew.firstOfficer}}
+                            <img class="crew-img-big" src="{{actor.firstOfficer.img}}" title="{{actor.firstOfficer.name}}" data-crewRole="firstOfficer">
+                        {{else}}
+                            <img class="crew-img-big" src="icons/svg/mystery-man.svg" title="First Officer" data-crewRole="firstOfficer">
+                        {{/if}}
+                    </div>
+                    <label>{{localize "SHIP.NAMED_CREW.FIRST_OFFICER"}}</label>
+                </div>
+                <div class="stat border rank2" data-crewRole="enginseerPrime">
+                    <div class="avatar" data-crewRole="enginseerPrime">
+                        {{#if system.namedCrew.enginseerPrime}}
+                            <img class="crew-img-big" src="{{actor.enginseerPrime.img}}" title="{{actor.enginseerPrime.name}}" data-crewRole="enginseerPrime">
+                        {{else}}
+                            <img class="crew-img-big" src="icons/svg/mystery-man.svg" title="Prime Enginseer" data-crewRole="enginseerPrime">
+                        {{/if}}
+                    </div>
+                    <label>{{localize "SHIP.NAMED_CREW.PRIME_ENGINSEER"}}</label>
+                </div>
+                <div class="stat border rank2" data-crewRole="highFactotum">
+                    <div class="avatar" data-crewRole="highFactotum">
+                        {{#if system.namedCrew.highFactotum}}
+                            <img class="crew-img-big" src="{{actor.highFactotum.img}}" title="{{actor.highFactotum.name}}" data-crewRole="highFactotum">
+                        {{else}}
+                            <img class="crew-img-big" src="icons/svg/mystery-man.svg" title="High Factotum" data-crewRole="highFactotum">
+                        {{/if}}
+                    </div>
+                    <label>{{localize "SHIP.NAMED_CREW.HIGH_FACTOTUM"}}</label>
+                </div>
+            </div>
+        </div>
+        <h1>{{localize "TITLE.CREW_RANK_THREE"}}</h1>
+        <div class="crew flex border">
+            <div class="crew flex row">
+                <div class="crew-rank3 border" data-crewRole="masterArms">
+                    <div class="avatar" data-crewRole="masterArms">
+                        {{#if system.namedCrew.masterArms}}
+                            <img class="crew-img-medium" src="{{actor.masterArms.img}}" title="{{actor.masterArms.name}}" data-crewRole="masterArms">
+                        {{else}}
+                            <img class="crew-img-medium" src="icons/svg/mystery-man.svg" title="Master At Arms" data-crewRole="masterArms">
+                        {{/if}}
+                    </div>
+                    <label>{{localize "SHIP.NAMED_CREW.MASTER_ARMS"}}</label>
+                </div>
+                <div class="crew-rank3 border" data-crewRole="masterHelmsman">
+                    <div class="avatar" data-crewRole="masterHelmsman">
+                        {{#if system.namedCrew.masterHelmsman}}
+                            <img class="crew-img-medium" src="{{actor.masterHelmsman.img}}" title="{{actor.masterHelmsman.name}}" data-crewRole="masterHelmsman">
+                        {{else}}
+                            <img class="crew-img-medium" src="icons/svg/mystery-man.svg" title="Master Helmsman" data-crewRole="masterHelmsman">
+                        {{/if}}
+                    </div>
+                    <label>{{localize "SHIP.NAMED_CREW.MASTER_HELMSMAN"}}</label>
+                </div>
+                <div class="crew-rank3 border" data-crewRole="masterOrdnance">
+                    <div class="avatar" data-crewRole="masterOrdnance">
+                        {{#if system.namedCrew.masterOrdnance}}
+                            <img class="crew-img-medium" src="{{actor.masterOrdnance.img}}" title="{{actor.masterOrdnance.name}}" data-crewRole="masterOrdnance">
+                        {{else}}
+                            <img class="crew-img-medium" src="icons/svg/mystery-man.svg" title="Master Of Ordnance" data-crewRole="masterOrdnance">
+                        {{/if}}
+                    </div>
+                    <label>{{localize "SHIP.NAMED_CREW.MASTER_ORDNANCE"}}</label>
+                </div>
+                <div class="crew-rank3 border" data-crewRole="masterEtherics">
+                    <div class="avatar" data-crewRole="masterEtherics">
+                        {{#if system.namedCrew.masterEtherics}}
+                            <img class="crew-img-medium" src="{{actor.masterEtherics.img}}" title="{{actor.masterEtherics.name}}" data-crewRole="masterEtherics">
+                        {{else}}
+                            <img class="crew-img-medium" src="icons/svg/mystery-man.svg" title="Master Of Etherics" data-crewRole="masterEtherics">
+                        {{/if}}
+                    </div>
+                    <label>{{localize "SHIP.NAMED_CREW.MASTER_ETHERICS"}}</label>
+                </div>
+                <div class="crew-rank3 border" data-crewRole="masterChirurgeon">
+                    <div class="avatar" data-crewRole="masterChirurgeon">
+                        {{#if system.namedCrew.masterChirurgeon}}
+                            <img class="crew-img-medium" src="{{actor.masterChirurgeon.img}}" title="{{actor.masterChirurgeon.name}}" data-crewRole="masterChirurgeon">
+                        {{else}}
+                            <img class="crew-img-medium" src="icons/svg/mystery-man.svg" title="Chief Chirurgeon" data-crewRole="masterChirurgeon">
+                        {{/if}}
+                    </div>
+                    <label>{{localize "SHIP.NAMED_CREW.MASTER_CHIRURGEON"}}</label>
+                </div>
+                <div class="crew-rank3 border" data-crewRole="masterWhispers">
+                    <div class="avatar" data-crewRole="masterWhispers">
+                        {{#if system.namedCrew.masterWhispers}}
+                            <img class="crew-img-medium" src="{{actor.masterWhispers.img}}" title="{{actor.masterWhispers.name}}" data-crewRole="masterWhispers">
+                        {{else}}
+                            <img class="crew-img-medium" src="icons/svg/mystery-man.svg" title="Master Of Whispers" data-crewRole="masterWhispers">
+                        {{/if}}
+                    </div>
+                    <label>{{localize "SHIP.NAMED_CREW.MASTER_WHISPERS"}}</label>
+                </div>
+                <div class="crew-rank3 border" data-crewRole="masterTelepathica">
+                    <div class="avatar" data-crewRole="masterTelepathica">
+                        {{#if system.namedCrew.masterTelepathica}}
+                            <img class="crew-img-medium" src="{{actor.masterTelepathica.img}}" title="{{actor.masterTelepathica.name}}" data-crewRole="masterTelepathica">
+                        {{else}}
+                            <img class="crew-img-medium" src="icons/svg/mystery-man.svg" title="Choir-Master Telepathica" data-crewRole="masterTelepathica">
+                        {{/if}}
+                    </div>
+                    <label>{{localize "SHIP.NAMED_CREW.MASTER_TELEPATHICA"}}</label>
+                </div>
+                <div class="crew-rank3 border" data-crewRole="masterWarp">
+                    <div class="avatar" data-crewRole="masterWarp">
+                        {{#if system.namedCrew.masterWarp}}
+                            <img class="crew-img-medium" src="{{actor.masterWarp.img}}" title="{{actor.masterWarp.name}}" data-crewRole="masterWarp">
+                        {{else}}
+                            <img class="crew-img-medium" src="icons/svg/mystery-man.svg" title="Navigator Primaris" data-crewRole="masterWarp">
+                        {{/if}}
+                    </div>
+                    <label>{{localize "SHIP.NAMED_CREW.MASTER_WARP"}}</label>
+                </div>
+            </div>
+        </div>
+        <h1>{{localize "TITLE.CREW_RANK_FOUR"}}</h1>
+        <div class="crew flex border">
+            <div class="crew flex row">
+                <div class="crew-rank4 border" data-crewRole="confessor">
+                    <div class="avatar" data-crewRole="confessor">
+                        {{#if system.namedCrew.confessor}}
+                            <img class="crew-img-small" src="{{actor.confessor.img}}" title="{{actor.confessor.name}}" data-crewRole="confessor">
+                        {{else}}
+                            <img class="crew-img-small" src="icons/svg/mystery-man.svg" title="Ship's Confessor" data-crewRole="confessor">
+                        {{/if}}
+                    </div>
+                    <label>{{localize "SHIP.NAMED_CREW.CONFESSOR"}}</label>
+                </div>
+                <div class="crew-rank4 border" data-crewRole="drivesmaster">
+                    <div class="avatar" data-crewRole="drivesmaster">
+                        {{#if system.namedCrew.drivesmaster}}
+                            <img class="crew-img-small" src="{{actor.drivesmaster.img}}" title="{{actor.drivesmaster.name}}" data-crewRole="drivesmaster">
+                        {{else}}
+                            <img class="crew-img-small" src="icons/svg/mystery-man.svg" title="Drivesmaster" data-crewRole="drivesmaster">
+                        {{/if}}
+                    </div>
+                    <label>{{localize "SHIP.NAMED_CREW.DRIVESMASTER"}}</label>
+                </div>
+                <div class="crew-rank4 border" data-crewRole="congregator">
+                    <div class="avatar" data-crewRole="congregator">
+                        {{#if system.namedCrew.congregator}}
+                            <img class="crew-img-small" src="{{actor.congregator.img}}" title="{{actor.congregator.name}}" data-crewRole="congregator">
+                        {{else}}
+                            <img class="crew-img-small" src="icons/svg/mystery-man.svg" title="Omnissianic Congregator" data-crewRole="congregator">
+                        {{/if}}
+                    </div>
+                    <label>{{localize "SHIP.NAMED_CREW.CONGREGATOR"}}</label>
+                </div>
+                <div class="crew-rank4 border" data-crewRole="bosun">
+                    <div class="avatar" data-crewRole="bosun">
+                        {{#if system.namedCrew.bosun}}
+                            <img class="crew-img-small" src="{{actor.bosun.img}}" title="{{actor.bosun.name}}" data-crewRole="bosun">
+                        {{else}}
+                            <img class="crew-img-small" src="icons/svg/mystery-man.svg" title="Chief Bosun" data-crewRole="bosun">
+                        {{/if}}
+                    </div>
+                    <label>{{localize "SHIP.NAMED_CREW.CHIEF_BOSUN"}}</label>
+                </div>
+                <div class="crew-rank4 border" data-crewRole="infernus">
+                    <div class="avatar" data-crewRole="infernus">
+                        {{#if system.namedCrew.infernus}}
+                            <img class="crew-img-small" src="{{actor.infernus.img}}" title="{{actor.infernus.name}}" data-crewRole="infernus">
+                        {{else}}
+                            <img class="crew-img-small" src="icons/svg/mystery-man.svg" title="Infernus Master" data-crewRole="infernus">
+                        {{/if}}
+                    </div>
+                    <label>{{localize "SHIP.NAMED_CREW.INFERNUS_MASTER"}}</label>
+                </div>
+                <div class="crew-rank4 border" data-crewRole="twistcatcher">
+                    <div class="avatar" data-crewRole="twistcatcher">
+                        {{#if system.namedCrew.twistcatcher}}
+                            <img class="crew-img-small" src="{{actor.twistcatcher.img}}" title="{{actor.twistcatcher.name}}" data-crewRole="twistcatcher">
+                        {{else}}
+                            <img class="crew-img-small" src="icons/svg/mystery-man.svg" title="Twistcatcher" data-crewRole="twistcatcher">
+                        {{/if}}
+                    </div>
+                    <label>{{localize "SHIP.NAMED_CREW.TWISTCATCHER"}}</label>
+                </div>
+                <div class="crew-rank4 border" data-crewRole="voxmaster">
+                    <div class="avatar" data-crewRole="voxmaster">
+                        {{#if system.namedCrew.voxmaster}}
+                            <img class="crew-img-small" src="{{actor.voxmaster.img}}" title="{{actor.voxmaster.name}}" data-crewRole="voxmaster">
+                        {{else}}
+                            <img class="crew-img-small" src="icons/svg/mystery-man.svg" title="Master Of The Vox" data-crewRole="voxmaster">
+                        {{/if}}
+                    </div>
+                    <label>{{localize "SHIP.NAMED_CREW.VOXMASTER"}}</label>
+                </div>
+                <div class="crew-rank4 border" data-crewRole="purser">
+                    <div class="avatar" data-crewRole="purser">
+                        {{#if system.namedCrew.purser}}
+                            <img class="crew-img-small" src="{{actor.purser.img}}" title="{{actor.purser.name}}" data-crewRole="purser">
+                        {{else}}
+                            <img class="crew-img-small" src="icons/svg/mystery-man.svg" title="Purser" data-crewRole="purser">
+                        {{/if}}
+                    </div>
+                    <label>{{localize "SHIP.NAMED_CREW.PURSER"}}</label>
+                </div>
+                <div class="crew-rank4 border" data-crewRole="cartographer">
+                    <div class="avatar" data-crewRole="cartographer">
+                        {{#if system.namedCrew.cartographer}}
+                            <img class="crew-img-small" src="{{actor.cartographer.img}}" title="{{actor.cartographer.name}}" data-crewRole="cartographer">
+                        {{else}}
+                            <img class="crew-img-small" src="icons/svg/mystery-man.svg" title="Carto-Artifex" data-crewRole="cartographer">
+                        {{/if}}
+                    </div>
+                    <label>{{localize "SHIP.NAMED_CREW.CARTOGRAPHER"}}</label>
+                </div>
+                <div class="crew-rank4 border" data-crewRole="steward">
+                    <div class="avatar" data-crewRole="steward">
+                        {{#if system.namedCrew.steward}}
+                            <img class="crew-img-small" src="{{actor.steward.img}}" title="{{actor.steward.name}}" data-crewRole="steward">
+                        {{else}}
+                            <img class="crew-img-small" src="icons/svg/mystery-man.svg" title="Ship's Steward" data-crewRole="steward">
+                        {{/if}}
+                    </div>
+                    <label>{{localize "SHIP.NAMED_CREW.STEWARD"}}</label>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

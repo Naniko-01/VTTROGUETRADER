@@ -1,0 +1,79 @@
+<form class="{{cssClass}}" autocomplete="off">
+    <div class="header border">
+        <div class="flex row">
+            <div class="avatar">
+                <img class="profile-img" src="{{actor.img}}" data-edit="img" title="{{actor.name}}" />
+            </div>
+            <div class="flex column grow justify-center">
+                <div class="name header-row">
+                    <label>Ship Name</label>
+                    <input name="name" type="text" value="{{actor.name}}" />
+                </div>
+            </div>
+        </div>
+        <div class="flex row">
+            <div class="flex column grow justify-center">
+                <div class="hullClass">
+                    <label>Hull Class</label>
+                    <select class="hullClass" name="system.hullClass" type="text">
+                        {{#select system.hullClass}}
+                            <option value=""></option>
+                            <option value="Transport">Transport</option>
+                            <option value="Raider">Raider</option>
+                            <option value="Frigate">Frigate</option>
+                            <option value="Light Cruiser">Light Cruiser</option>
+                            <option value="Cruiser">Cruiser</option>
+                            <option value="Battlecruiser">Battlecruiser</option>
+                            <option value="Grand Cruiser">Grand Cruiser</option>
+                            <option value="Battleship">Battleship</option>
+                        {{/select}}
+                    </select>
+                </div>
+            </div>
+            <div class="flex column grow justify-center">
+                <div class="hullName">
+                    <label>Hull</label>
+                    <input name="system.hullName" value="{{system.hullName}}" type="text" />
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="sheet-tabs tabs flex row" data-group="primary">
+        <b class="item" data-tab="data">{{localize "TAB.DATA"}}</b>
+        <b class="item" data-tab="combat">{{localize "TAB.COMBAT"}}</b>
+        <b class="item" data-tab="crew">{{localize "TAB.CREW"}}</b>
+        <b class="item" data-tab="essential">{{localize "TAB.ESSENTIAL_COMPONENTS"}}</b>
+        <b class="item" data-tab="supplemental">{{localize "TAB.SUPPLEMENTAL_COMPONENTS"}}</b>
+        <b class="item" data-tab="weapons">{{localize "TAB.WEAPONS"}}</b>
+        <b class="item" data-tab="complications">{{localize "TAB.COMPLICATIONS"}}</b>
+        <b class="item" data-tab="notes">{{localize "TAB.NOTES"}}</b>
+    </div>
+
+    <div class="sheet-body">
+        <div class="tab" data-group="primary" data-tab="data">
+            {{> systems/rogue-trader/template/sheet/actor/tab/ship-data.html}}
+        </div>
+        <div class="tab" data-group="primary" data-tab="combat">
+            {{> systems/rogue-trader/template/sheet/actor/tab/ship-combat.html}}
+        </div>
+        <div class="tab" data-group="primary" data-tab="crew">
+            {{> systems/rogue-trader/template/sheet/actor/tab/ship-crew.html}}
+        </div>
+        <div class="tab" data-group="primary" data-tab="essential">
+            {{> systems/rogue-trader/template/sheet/actor/tab/ship-essential.html}}
+        </div>
+        <div class="tab" data-group="primary" data-tab="supplemental">
+            {{> systems/rogue-trader/template/sheet/actor/tab/ship-supplemental.html}}
+        </div>
+        <div class="tab" data-group="primary" data-tab="complications">
+            {{> systems/rogue-trader/template/sheet/actor/tab/ship-complications.html}}
+        </div>
+        <div class="tab" data-group="primary" data-tab="weapons">
+            {{> systems/rogue-trader/template/sheet/actor/tab/ship-weapons.html}}
+        </div>
+        <div class="tab" data-group="primary" data-tab="notes">
+            {{> systems/rogue-trader/template/sheet/actor/tab/ship-notes.html}}
+        </div>
+    </div>
+</form>

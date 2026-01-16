@@ -1,0 +1,107 @@
+<div class="tab">
+    <div class="stats border">
+        <h1>{{localize "TITLE.STATS"}}</h1>
+        <div class="stats flex">
+            <div class="stats flex column">
+                <div class="stat speed">
+                    <label>Speed</label>
+                    <input name="system.speed" type="number" value="{{system.speed}}" data-dtype="Number"/>
+                </div>
+                <div class="stat manoeuvrability">
+                    <label>Manoeuvrability</label>
+                    <input name="system.manoeuvrability" type="number" value="{{system.manoeuvrability}}" data-dtype="Number" />
+                </div>
+                <div class="stat detection">
+                    <label>Detection</label>
+                    <input name="system.detection" type="number" value="{{system.detection}}" data-dtype="Number" />
+                </div>
+            </div>
+            <div class="stats flex column">
+                <div class="stat turretRating">
+                    <label>Turret Rating</label>
+                    <input name="system.turretRating" type="number" value="{{system.turretRating}}" data-dtype="Number" />
+                </div>
+                <div class="stat shields">
+                    <label>Shields</label>
+                    <input name="system.shields" type="number" value="{{system.shields}}" data-dtype="Number" />
+                </div>
+                <div class="stat armour">
+                    <label>Armour</label>
+                    <input name="system.armour" type="number" value="{{system.armour}}" data-dtype="Number" />
+                </div>
+            </div>
+            <div class="stats flex column">
+                <div class="stat hullIntegrity">
+                    <label>Hull Integrity: Current</label>
+                    <input name="system.hullIntegrity.value" type="number" value="{{system.hullIntegrity.value}}" data-dtype="Number" />
+                </div>
+                <div class="stat hullIntegrity">
+                    <label>Hull Integrity: Max</label>
+                    <input name="system.hullIntegrity.max" type="number" value="{{system.hullIntegrity.max}}" data-dtype="Number" /> 
+                </div>
+            </div>
+            <div class="stats flex column">
+                <div class="stat crewCount">
+                    <label>Crew Count: Current</label>
+                    <input name="system.crewCount.value" type="number" value="{{system.crewCount.value}}" data-dtype="Number" />
+                </div>
+                <div class="stat crewCount">
+                    <label>Crew Count: Max</label>
+                    <input name="system.crewCount.max" type="number" value="{{system.crewCount.max}}" data-dtype="Number" /> 
+                </div>
+            </div>
+            <div class="stats flex column">
+                <div class="stat crewMorale">
+                    <label>Crew Morale: Current</label>
+                    <input name="system.crewMorale.value" type="number" value="{{system.crewMorale.value}}" data-dtype="Number" />
+                </div>
+                <div class="stat crewCount">
+                    <label>Crew Morale: Max</label>
+                    <input name="system.crewMorale.max" type="number" value="{{system.crewMorale.max}}" data-dtype="Number" /> 
+                </div>
+            </div>
+            <div class="stats flex column">
+                <div class="stat space">
+                    <label>Space: Total</label>
+                    <input name="system.space.max" type="number" value="{{system.space.max}}" data-dtype="Number" /> 
+                </div>
+                <div class="stat space">
+                    <label>Space: Used</label>
+                    <input name="system.space.value" type="number" value="{{system.space.value}}" data-dtype="Number" disabled />
+                </div>
+                <div class="stat space">
+                    <label>Space: Available</label>
+                    <input name="system.space.avail" type="number" value="{{system.space.avail}}" data-dtype="Number" disabled /> 
+                </div>
+            </div>
+            <div class="stats flex column">
+                <div class="stat power">
+                    <label>Power: Total</label>
+                    <input name="system.power.max" type="number" value="{{system.power.max}}" data-dtype="Number" disabled/> 
+                </div>
+                <div class="stat power">
+                    <label>Power: Used</label>
+                    <input name="system.power.value" type="number" value="{{system.power.value}}" data-dtype="Number" disabled />
+                </div>
+                <div class="stat power">
+                    <label>Power: Available</label>
+                    <input name="system.power.avail" type="number" value="{{system.power.avail}}" data-dtype="Number" disabled /> 
+                </div>
+            </div>
+            <div class="stats flex column">
+                <div class="stat points">
+                    <label>Points: Hull</label>
+                    <input name="system.points.base" type="number" value="{{system.points.base}}" data-dtype="Number" /> 
+                </div>
+                <div class="stat points">
+                    <label>Points: Components</label>
+                    <input name="system.points.components" type="number" value="{{system.points.components}}" data-dtype="Number" disabled />
+                </div>
+                <div class="stat points">
+                    <label>Points: Total</label>
+                    <input name="system.points.total" type="number" value="{{system.points.total}}" data-dtype="Number" disabled /> 
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

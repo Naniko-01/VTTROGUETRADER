@@ -1,0 +1,262 @@
+<div class="flex wrap border row colony-core">
+    <div class="top-section">
+        <div class="colony-governor">
+            <h1 class="space5">Губернатор</h1>
+            <div class="flex row justify-space-around border">
+                <div class="governor item-list justify-space-around">
+                    <div class="governor-avatar flex column space10">
+                        <div class="stat border" data-crewRole="governor">
+                            <div class="avatar" data-crewRole="governor">
+                                {{#if system.governor.actor}}
+                                    <img class="crew-img-governor" src="{{actor.governor.img}}" title="{{actor.governor.name}}" data-crewRole="governor">
+                                {{else}}
+                                    <img class="crew-img-governor" src="icons/svg/mystery-man.svg" title="Governor" data-crewRole="governor">
+                                {{/if}}
+                            </div>
+                            <label>{{localize "COLONY.GOVERNOR"}}</label>
+                        </div>
+                    </div>
+                    <div class="flex column justify-space-between space10" style="width: 125px;">
+                        <div class="flex space5">
+                            <label>Тип представителя</label>
+                        </div>
+                        <div class="flex">
+                            <select name="system.governor.governorType">
+                                {{#select system.governor.governorType}}
+                                    <option value="administrative">{{localize "COLONY.GOV.ADMINISTRATIVE"}}</option>
+                                    <option value="faithful">{{localize "COLONY.GOV.FAITHFUL"}}</option>
+                                    <option value="lawful">{{localize "COLONY.GOV.LAWFUL"}}</option>
+                                    <option value="accounting">{{localize "COLONY.GOV.ACCOUNTING"}}</option>
+                                    <option value="local">{{localize "COLONY.GOV.LOCAL"}}</option>
+                                    <option value="relaxed">{{localize "COLONY.GOV.RELAXED"}}</option>
+                                    <option value="warlike">{{localize "COLONY.GOV.WARLIKE"}}</option>
+                                {{/select}}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="flex column justify-space-between" style="width: 125px;">
+                        <div class="flex space5">
+                            <label>Навык представителя</label>
+                        </div>
+                        <div class="flex">
+                            <input name="governor-skill" type="number" value="{{system.governor.skillBonus}}" data-dtype="Number" disabled/>
+                        </div>
+                    </div>
+                </div>
+                <div class="governor item-list justify-space-around space-right-10">
+                    <div class="flex row item-align-center">
+                        <input type="checkbox" id="toggle" name="system.governor.advancedTraining" {{#if system.governor.advancedTraining}}checked{{/if}}>
+                        <label for="toggle">Обучение Губернатора</label>
+                    </div>
+                    <div class="flex column">
+                        <div class="flex column space5">
+                            <label style="text-align: left; margin-bottom: 2px;">Описание</label>
+                            <textarea style="resize: none; width: 220px; height: 65px; font-size: 13px;" disabled>{{actor.governorTypeBonus}}</textarea>
+                        </div>
+                        <div class="flex column">
+                            <label style="text-align: left; margin-bottom: 2px;">Бонус</label>
+                            <textarea style="resize: none; width: 220px; height: 110px; font-size: 13px;" disabled>{{actor.governorTypeSideEffect}}</textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="colony-resources">
+            <h1 class="space5">Доступный ресурс</h1>
+            <div class="item-list border">
+                <div class="flex header">
+                    <b class="name">{{localize "COLONY.RESOURCE.HEADER"}}</b>
+                    <b class="source">{{localize "COLONY.RESOURCE.SOURCE"}}</b>
+                    <b class="amount">{{localize "COLONY.RESOURCE.AMOUNT"}}</b>
+                    <a class="button item-create" title="Add Resource" data-type="planetaryResource"><i class="fas fa-plus"></i></a>
+                </div>
+                <div class="resources items">
+                    {{#each system.resources as |resource|}}
+                    <div class="resource item flex row" data-item-id="{{resource.id}}">
+                        <div class="flex name item-edit">
+                            <div class="image-container">
+                                <div class="image" style="background-image: url('{{resource.img}}')"></div>
+                            </div>
+                            <div>{{resource.name}}</div>
+                        </div>
+                        <div class="source">{{resource.system.source}}</div>
+                        <div class="amount">{{resource.system.amount}}</div>
+                        <div class="button">
+                            <a class="item-control item-delete" title="Delete Resource"><i class="fas fa-trash"></i></a>
+                        </div>
+                    </div>
+                    {{/each}}
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="flex wrap column operations">
+        <h1 class="space5">Функции</h1>
+        <div class="colony-rolls">
+            <div class="flex row header roll-button">
+                <a class="button roll-growth" type="roll" data-roll="colonyGrowth" title="Roll Yearly Growth">
+                    <i class="fas fa-dice"></i>
+                    <span>{{localize "COLONY.ROLL.COLONY_GROWTH"}}</span>
+                </a>
+            </div>
+            <div class="flex row roll-button">
+                <a class="button roll-events" type="roll" title="Roll Colony Events">
+                    <i class="fas fa-dice"></i>
+                    <span>{{localize "COLONY.ROLL.COLONY_EVENTS"}}</span>
+                </a>
+            </div>
+            <div class="flex row roll-button">
+                <a class="button roll-resources" type="roll" title="Roll Consume Resources">
+                    <i class="fas fa-dice"></i>
+                    <span>{{localize "COLONY.ROLL.CONSUME_RESOURCES"}}</span>
+                </a>
+            </div>
+            <div class="flex row roll-button">
+                <a class="button roll-governor" type="roll" title="Roll Governor Skill">
+                    <i class="fas fa-dice"></i>
+                    <span>{{localize "COLONY.ROLL.GOVERNOR_SKILL"}}</span>
+                </a>
+            </div>
+        </div>
+        <div class="flex row">
+            <div class="flex column">
+                <div class="flex column colony-type border">
+                    <h2>Тип Колонии</h2>
+                    <div class="flex wrap row">
+                        <div class="flex column justify-space-around align-center item-list">
+                            <div class="flex row type-info">
+                                <label class="flex name">Тип</label>
+                                <div class="flex colony-stat">
+                                    <select name="system.colonyType">
+                                        {{#select system.colonyType}}
+                                            {{#each actor.colonyTypes as |colonyType|}}
+                                                <option value="{{colonyType}}">{{localizeColonyType colonyType}}</option>
+                                            {{/each}}
+                                        {{/select}}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="flex column type-info border">
+                                <div class="flex header name">
+                                    <b>Бонус для Дианастии</b>
+                                </div>
+                                <div class="flex row colony-stat">
+                                    <label>{{actor.colonyTypeExplorerBonus}}</label>
+                                </div>
+                            </div>
+                            <div class="flex column type-info border">
+                                <div class="flex header name">
+                                    <b>Бонус Улучшений</b>
+                                </div>
+                                <div class="flex row colony-stat">
+                                    <label>{{actor.colonyTypeUpgradeBonus}}</label>
+                                </div>
+                            </div>
+                            <div class="flex column type-info border">
+                                <div class="flex header name">
+                                    <b>Побочный эффект</b>
+                                </div>
+                                <div class="flex row colony-stat">
+                                    <label>{{actor.colonyTypeSideEffect}}</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="flex column">
+                <div class="growth flex column border">
+                    <h2>Прирост</h2>
+                    <div class="flex row justify-space-around space5">
+                        <label>Потребление</label>
+                        <div class="flex min-content">
+                            <input class="total" name="required-growth" type="number" value="{{system.stats.requiredGrowth}}" data-dtype="Number" disabled />
+                        </div>
+                    </div>
+                    <div class="flex row">
+                        <div class="colony-stat-column item-list border">
+                            <div class="flex header">
+                                <b>Довольство</b>
+                            </div>
+                            <div class="flex row colony-stat justify-space-between">
+                                <label>Текущее</label>
+                                <input class="total" name="system.stats.loyalty" type="number" value="{{system.stats.loyalty}}" data-dtype="Number" />
+                            </div>
+                            <div class="flex row colony-stat justify-space-between">
+                                <label>Годовой прирост</label>
+                                <input class="total" name="system.stats.loyaltyGain" type="number" value="{{system.stats.loyaltyGain}}" data-dtype="Number" disabled />
+                            </div>
+                        </div>
+                        <div class="item-list colony-stat-column border">
+                            <div class="flex header">
+                                <b>Продуктивность</b>
+                            </div>
+                            <div class="flex row colony-stat justify-space-between">
+                                <label>Текущее</label>
+                                <input class="total" name="system.stats.prosperity" type="number" value="{{system.stats.prosperity}}" data-dtype="Number" />
+                            </div>
+                            <div class="flex row colony-stat justify-space-between">
+                                <label>Годовой прирост</label>
+                                <input class="total" name="system.stats.prosperityGain" type="number" value="{{system.stats.prosperityGain}}" data-dtype="Number" disabled />
+                            </div>
+                        </div>
+                        <div class="colony-stat-column item-list border">
+                            <div class="flex header">
+                                <b>Порядок</b>
+                            </div>
+                            <div class="flex row colony-stat justify-space-between">
+                                <label>Текущее</label>
+                                <input class="total" name="system.stats.security" type="number" value="{{system.stats.security}}" data-dtype="Number" />
+                            </div>
+                            <div class="flex row colony-stat justify-space-between">
+                                <label>Годовой прирост</label>
+                                <input class="total" name="system.stats.securityGain" type="number" value="{{system.stats.securityGain}}" data-dtype="Number" disabled />
+                            </div>
+                        </div>    
+                        <div class="colony-stat-column item-list border">
+                            <div class="flex header">
+                                <b>Благочестие</b>
+                            </div>
+                            <div class="flex row colony-stat justify-space-between">
+                                <label>Текущее</label>
+                                <input class="total" name="system.stats.piety" type="number" value="{{system.stats.piety}}" data-dtype="Number" />
+                            </div>
+                            <div class="flex row colony-stat justify-space-between">
+                                <label>Годовой прирост</label>
+                                <input class="total" name="system.stats.pietyGain" type="number" value="{{system.stats.pietyGain}}" data-dtype="Number" disabled />
+                            </div>    
+                        </div>
+                    </div>
+                </div>
+                <div class="flex column development border">
+                    <h2>Развитие</h2>
+                    <div class="flex row property">
+                        <label class="name">Размер Колонии</label>
+                        <div class="flex row data">
+                            <input name="system.stats.size" type="number" value="{{actor.currentColonySize}}" data-dtype="Number" />
+                            <input name="colony-size" type="text" value="{{localizeColonySize actor.currentColonySize}}" disabled />
+                        </div>
+                    </div>
+                    <div class="flex row property">
+                        <label class="name">Прирост к Фактору Прибыли</label>
+                        <div class="flex row data">
+                            <input name="profit-factor" type="number" value="{{actor.colonyProfitFactor}}" data-dtype="Number" disabled />
+                        </div>
+                    </div>
+                    <div class="flex row property">
+                        <label class="name">Стоимость Модернизации</label>
+                        <div class="flex row data">
+                            <input name="system.development.acquisitionModifier" type="number" value="{{system.development.acquisitionModifier}}" data-dtype="Number" />
+                        </div>
+                    </div>
+                    <div class="flex row property">
+                        <label class="name">Консервированные ресурсы</label>
+                        <div class="flex row data">
+                            <input type="checkbox" name="system.governor.conservativeLastTick" {{#if system.stats.conservativeLastTick}}checked{{/if}} disabled>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

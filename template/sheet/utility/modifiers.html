@@ -1,0 +1,52 @@
+<div class="flex wrap modifiers" style="height: 100%;">
+  <div class="border" style="flex-basis: 100%;">
+    <h1>
+      {{localize "TITLE.ITEM_MODIFIERS"}}
+    </h1>
+    <div class="item-list">
+        <!-- Handlebars template to dynamically list characteristic modifiers -->
+        <div class="modifier-item flex header row">
+          <b class="modifier-column">{{localize "DIALOG.CHARACTERISTIC_NAME"}}</b>
+          <b class="modifier-column">{{localize "DIALOG.VALUE_MODIFIER"}}</b>
+          <b class="modifier-column">{{localize "DIALOG.UNNATURAL_VALUE"}}</b>
+          <a class="modifier-button button add-char-modifier" title="Add Characteristic Modifier" data-type="characteristic"><i class="fas fa-plus"></i></a>
+        </div>
+        {{#each system.modifiers.characteristic as |charMod|}}
+          {{log charMod}}
+          <div class="modifier-item flex row" data-modifier-id="characteristic" data-modifier-key="{{charMod.id}}">
+              <a class="flex row modifier-column" id="modifier-char-label-{{charMod.id}}" data-modifier-label="{{charMod.label}}">{{localize charMod.label}}</a>
+              <div class="flex row modifier-column">
+                <input id="modifier-char-value-{{charMod.id}}" type="number" value="{{charMod.characteristicModifier}}" data-dtype="Number"/>
+              </div>
+              <div class="flex row modifier-column">
+                <input id="modifier-unnatural-value-{{charMod.id}}" type="number" value="{{charMod.unnaturalModifier}}" data-dtype="Number"/>
+              </div>
+              <div class="flex row modifier-button button">
+                <a class="item-control item-delete" title="Delete Modifier"><i class="fas fa-trash"></i></a>
+              </div>
+          </div>
+        {{/each}}
+        <div class="modifier-item flex header row">
+          <b class="modifier-column">Skill</b>
+          <b class="modifier-column">Value Modifier</b>
+          <a class="modifier-button button add-skill-modifier" title="Add Skill Modifier" data-type="skill"><i class="fas fa-plus"></i></a>
+        </div>
+        {{#each system.modifiers.skill as |skillMod|}}
+          <div class="modifier-item flex row" data-modifier-id="skill" data-modifier-key="{{skillMod.id}}">
+            <a class="flex row modifier-column" id="modifier-skill-label-{{skillMod.id}}" data-modifier-label="{{skillMod.label}}">{{localizeMultiple skillMod.label}}</a>
+            <div class="flex row modifier-column">
+              <input id="modifier-skill-value-{{skillMod.id}}" type="number" value="{{skillMod.skillModifier}}" data-dtype="Number"/>
+            </div>
+            <div class="flex row modifier-button button">
+              <a class="item-control item-delete" title="Delete Modifier"><i class="fas fa-trash"></i></a>
+            </div>
+          </div>
+        {{/each}}
+        <div class="modifier-item flex header row">
+          <b class="modifier-column">Other</b>
+          <b class="modifier-column">Value</b>
+          <a class="modifier-button button add-other-modifier" title="Add Other Modifier" data-type="other"><i class="fas fa-plus"></i></a>
+        </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,23 @@
+<div class="rogue-trader chat roll" data-actor-id="{{ownerId}}" data-item-id="{{itemId}}" {{#if tokenId}}data-token-id="{{tokenId}}"{{/if}}>
+    <div class="background border flex column item-align-start">
+        <h1 class="space10">{{localize name}}</h1>
+        <p><strong>Resource: </strong>{{selectedResource.name}}</p>
+        <p class="space10"><strong>Consumed: </strong>{{consumedResourceAmount}}</p>
+        {{#if burnResources}}
+            <p style="color: var(--color-failure);"><strong>Resources burned!</strong></p>
+            <p><strong>Burn Type: </strong>{{localizeBurnType burnData.burnType}}</p>
+            <p><strong>Generated: </strong>{{burnData.generated}}</p>
+        {{/if}}
+        {{#if conserveResources}}
+            <p style="color: var(--color-success);"><strong>Conservative consumption!</strong></p>
+        {{/if}}
+    </div>
+
+    <div class="dice-rolls" style="display:none">
+        {{#each renders as |render|}}
+            <div class="dice-roll-render">
+                {{{render}}}
+            </div>
+        {{/each}}
+    </div>
+</div>

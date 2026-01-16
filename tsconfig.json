@@ -1,0 +1,8 @@
+{
+  "compilerOptions": {
+    "types": ["fvtt-types"],
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "strict": true
+  }
+}

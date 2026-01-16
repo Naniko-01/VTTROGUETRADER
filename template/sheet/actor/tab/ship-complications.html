@@ -1,0 +1,14 @@
+<div class="tab">
+    <div class="complications-editor border">
+         <h1>ХАРАКТЕР МАШИННОГО ДУХА</h1>
+        <div style="height: 200px; width: 100%">
+            {{editor system.complicationsHTML target="system.complications" engine="prosemirror" button=true}}
+        </div>
+    </div>
+    <div class="complications-editor border">
+        <h1>ПРОШЛОЕ</h1>
+       <div style="height: 200px; width: 100%">
+           {{editor system.pastHistoryHTML target="system.pastHistory" engine="prosemirror" button=true}}
+       </div>
+   </div>
+</div>

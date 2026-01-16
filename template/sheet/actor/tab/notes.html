@@ -1,0 +1,49 @@
+<div class="flex wrap notes-tab">
+    <div class="information border">
+        <h1>{{localize "TITLE.BIO"}}</h1>
+        <div class="information-row">
+            <div class="gender wrapper">
+                <label>{{localize "BIO.GENDER"}}</label>
+                <input name="system.bio.gender" type="text" value="{{system.bio.gender}}" />
+            </div>
+            <div class="age wrapper margin">
+                <label>{{localize "BIO.AGE"}}</label>
+                <input name="system.bio.age" type="text" value="{{system.bio.age}}" />
+            </div>
+            <div class="build wrapper margin">
+                <label>{{localize "BIO.BUILD"}}</label>
+                <input name="system.bio.build" type="text" value="{{system.bio.build}}" />
+            </div>
+            <div class="complexion wrapper margin">
+                <label>{{localize "BIO.COMPLEXION"}}</label>
+                <input name="system.bio.complexion" type="text" value="{{system.bio.complexion}}" />
+            </div>
+            <div class="hair wrapper margin" style="margin-left: 16px">
+                <label>{{localize "BIO.HAIR"}}</label>
+                <input name="system.bio.hair" type="text" value="{{system.bio.hair}}" />
+            </div>
+        </div>
+        <div class="information-row full">
+            <div class="lure wrapper full">
+                <label>{{localize "BIO.LURE"}}</label>
+                <input name="system.bio.lure" type="text" value="{{system.bio.lure}}" />
+            </div>
+        </div>
+        <div class="information-row full">
+            <div class="trials wrapper full">
+                <label>{{localize "BIO.TRIALS"}}</label>
+                <input name="system.bio.trials" type="text" value="{{system.bio.trials}}" />
+            </div>
+        </div>
+        <div class="information-row full">
+            <div class="nature wrapper full">
+                <label>{{localize "BIO.NATURE"}}</label>
+                <input name="system.bio.nature" type="text" value="{{system.bio.nature}}" />
+            </div>
+        </div>
+    </div>
+    <div class="notes-editor border">
+        <h1>{{localize "TITLE.NOTES"}}</h1>
+        {{editor system.bio.biographyHTML target="system.bio.notes" engine="prosemirror" button=true editable=true}}
+    </div>
+</div>

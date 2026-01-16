@@ -1,0 +1,27 @@
+<div class="rogue-trader dialog">
+    <div class="flex row wrap background border" style="flex-basis: 100%;margin-bottom: 5px">
+        <h1>{{localize "DIALOG.ADD_CHARACTERISTIC_MODIFIER"}}</h1>
+        <div class="flex row wrapper">
+            <label style="width: 50%;">{{localize "DIALOG.CHARACTERISTIC_NAME"}}</label>
+            <select id="attribute-name" data-dtype="String" style="width: 50%;">
+                {{#each (getCharacteristics)}}
+                    {{log this}}
+                  <option value="{{@key}}" id="modifier-option-{{@key}}" data-dtype="String" data-option-label="{{this}}">{{localize this}}</option>
+                {{/each}}
+            </select>
+        </div>
+        <div class="flex row wrapper">
+            <label style="width: 50%;">{{localize "DIALOG.CHARACTERISTIC_VALUE"}}</label>
+            <input id="modifier-char-value" type="number" value="0" data-dtype="Number" style="width: 50%;"/>
+        </div>
+        <div class="flex row wrapper">
+            <label style="width: 50%;">{{localize "DIALOG.UNNATURAL_VALUE"}}</label>
+            <input id="modifier-unnatural-value" type="number" value="0" data-dtype="Number" style="width: 50%;"/>
+        </div>
+    </div>
+</div>
+<script>
+    $(".wrapper input").focusin(function () {
+        $(this).select();
+    });
+</script>

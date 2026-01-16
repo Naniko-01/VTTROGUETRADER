@@ -1,0 +1,55 @@
+<form class="{{cssClass}}" autocomplete="off">
+    <div class="colony">
+        <div class="header border">
+            <div class="flex row">
+                <div class="avatar">
+                    <img class="profile-img" src="{{actor.img}}" data-edit="img" title="{{actor.name}}" />
+                </div>
+                <div class="flex column" style="flex: 1; margin: 5px;">
+                    <div class="flex row justify-space-around">
+                        <div class="name flex column align-center wrap">
+                            <label>{{localize "BIO.NAME"}}</label>
+                            <input name="name" type="text" value="{{actor.name}}" />
+                        </div>
+                        <div class="founding-date flex column align-center wrap">
+                            <label>{{localize "COLONY.FOUNDING_DATE"}}</label>
+                            <input name="system.bio.foundingDate" type="text" value="{{system.bio.foundingDate}}" />
+                        </div>
+                        <div class="founding-date flex column align-center wrap">
+                            <label>{{localize "COLONY.FOUNDING_COST"}}</label>
+                            <input name="system.bio.foundingCost" type="text" value="{{system.bio.foundingCost}}" />
+                        </div>
+                    </div>
+                    <div class="flex row justify-space-around">
+                        <div class="star-system flex column align-center wrap">
+                            <label>{{localize "COLONY.STAR_SYSTEM"}}</label>
+                            <input name="system.bio.starSystem" type="text" value="{{system.bio.starSystem}}" />
+                        </div>
+                        <div class="planet flex column align-center wrap">
+                            <label>{{localize "COLONY.PLANET"}}</label>
+                            <input name="system.bio.planet" type="text" value="{{system.bio.planet}}" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="sheet-tabs tabs flex row" data-group="primary">
+            <b class="item" data-tab="core">{{localize "TAB.CORE"}}</b>
+            <b class="item" data-tab="upgrades">{{localize "TAB.UPGRADES"}}</b>
+            <b class="item" data-tab="notes">{{localize "TAB.NOTES"}}</b>
+        </div>
+
+        <div class="sheet-body">
+            <div class="tab" data-group="primary" data-tab="core">
+                {{> systems/rogue-trader/template/sheet/actor/tab/colony-core.html}}
+            </div>
+            <div class="tab" data-group="primary" data-tab="upgrades">
+                {{> systems/rogue-trader/template/sheet/actor/tab/colony-upgrades.html}}
+            </div>
+            <div class="tab" data-group="primary" data-tab="notes">
+                {{> systems/rogue-trader/template/sheet/actor/tab/colony-notes.html}}
+            </div>
+        </div>
+    </div>
+</form>

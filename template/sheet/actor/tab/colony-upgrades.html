@@ -1,0 +1,59 @@
+<div class="flex wrap border column colony-upgrades">
+    <div class="flex column justify-space-around flex-full">
+        <div class="flex column planetary-slots">
+            <h1>Планератные ячейки</h1>
+            <div class="flex row border justify-space-around">
+                <div class="flex row property">
+                    <label class="name">Базовые планетарные ячейки</label>
+                    <div class="flex row data">
+                        <input name="system.development.baseSlots" type="number" value="{{system.development.baseSlots}}" data-dtype="Number" />
+                    </div>
+                </div>
+                <div class="flex row property">
+                    <label class="name">Занятые ячейки</label>
+                    <div class="flex row data">
+                        <input name="system.development.occupiedSlots" type="number" value="{{actor.colonyOccupiedSlots}}" disabled/>
+                        /
+                        <input name="system.development.slotsTotal" type="number" value="{{actor.colonyTotalSlots}}" disabled />
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="flex column upgrade-list flex-full">
+            <h1>Улучшения</h1>
+            <div class="item-list border flex-full">
+                <div class="flex header justify-space-between">
+                    <b class="name">{{localize "COLONY.UPGRADE.HEADER"}}</b>
+                    <b class="loyalty">{{localize "COLONY.UPGRADE.YEARLY_LOYALTY"}}</b>
+                    <b class="prosperity">{{localize "COLONY.UPGRADE.YEARLY_PROSPERITY"}}</b>
+                    <b class="security">{{localize "COLONY.UPGRADE.YEARLY_SECURITY"}}</b>
+                    <b class="piety">{{localize "COLONY.UPGRADE.YEARLY_PIETY"}}</b>
+                    <b class="bonus-slots">{{localize "COLONY.UPGRADE.BONUS_SLOTS"}}</b>
+                    <b class="special">{{localize "COLONY.UPGRADE.SPECIAL"}}</b>
+                    <a class="button item-create" title="Add Upgrade" data-type="colonyUpgrade"><i class="fas fa-plus"></i></a>
+                </div>
+                <div class="items flex-full">
+                    {{#each actor.colonyUpgrades as |item|}}
+                    <div class="item flex row justify-space-between" data-item-id="{{item.id}}">
+                        <div class="flex name item-edit">
+                            <div class="image-container">
+                                <div class="image" style="background-image: url('{{item.img}}')"></div>
+                            </div>
+                            <div>{{item.name}}</div>
+                        </div>
+                        <div class="loyalty">{{item.yearlyLoyalty}}</div>
+                        <div class="prosperity">{{item.yearlyProsperity}}</div>
+                        <div class="security">{{item.yearlySecurity}}</div>
+                        <div class="piety">{{item.yearlyPiety}}</div>
+                        <div class="bonus-slots">{{item.bonusSlots}}</div>
+                        <div class="special">{{item.special}}</div>
+                        <div class="button">
+                            <a class="item-control item-delete" title="Delete Weapon"><i class="fas fa-trash"></i></a>
+                        </div>
+                    </div>
+                    {{/each}}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

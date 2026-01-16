@@ -1,0 +1,35 @@
+<div class="rogue-trader chat roll colony-growth">
+    <div class="background border">
+        <h1>{{localize "COLONY.CHAT.GROWTH_REPORT"}} - {{actor.name}}</h1>
+        <div class="loyalty"> 
+            <h3>Loyalty</h3>
+            <p>Gained: {{loyalty.difference}}</p>
+            <P>Current Value: {{loyalty.updated}}</P>
+        </div>
+        <div class="prosperity">
+            <h3>Prosperity</h3>
+            <p>Gained: {{prosperity.difference}}</p>
+            <P>Current Value: {{prosperity.updated}}</P>
+        </div>
+        <div class="security">
+            <h3>Security</h3>
+            <p>Gained: {{security.difference}}</p>
+            <P>Current Value: {{security.updated}}</P>
+        </div>
+        <div class="piety">
+            <h3>Рiety</h3>
+            <p>Gained: {{piety.difference}}</p>
+            <P>Current Value: {{piety.updated}}</P>
+        </div>
+        {{#if shouldGrow}}
+        <div class="size-update">
+            <h2 style="color: var(--color-success);">Colony size increased!</h2>
+        </div>
+        {{/if}}
+        {{#if shouldDecreaseSize}}
+        <div class="size-update">
+            <h2 style="color: var(--color-success);">Colony size decreased!</h2>
+        </div>
+        {{/if}}
+    </div>
+</div>

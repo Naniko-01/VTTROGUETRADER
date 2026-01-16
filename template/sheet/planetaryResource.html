@@ -1,0 +1,52 @@
+<form class="rogue-trader sheet planetary-resource">
+    <div class="header border" style="flex: 0;">
+        <div class="flex row">
+            <div class="avatar">
+                <img class="profile-img" src="{{item.img}}" data-edit="img" title="{{item.name}}" />
+            </div>
+            <div class="flex column grow justify-center">
+                <div class="name header-row">
+                    <label>{{localize "TALENT.NAME"}}</label>
+                    <input name="name" type="text" value="{{item.name}}" />
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="sheet-tabs tabs flex row" data-group="primary" style="flex: 0;">
+        <b class="item" data-tab="data">{{localize "TAB.DATA"}}</b>
+        <b class="item" data-tab="notes">{{localize "TAB.NOTES"}}</b>
+    </div>
+
+    <div class="sheet-body">
+        <div class="tab" data-group="primary" data-tab="data">
+            <div class="stats border">
+                <h1>{{localize "TITLE.RESOURCE_DATA"}}</h1>
+                <div class="stats-row">
+                    <div class="stat benefit" style="flex: 1;">
+                        <label>{{localize "COLONY.RESOURCE.SOURCE"}}</label>
+                        <input name="system.source" type="text" value="{{system.source}}" dtype="Text" />
+                    </div>
+                </div>
+                <div class="stats-row">
+                    <div class="stat benefit">
+                        <label>{{localize "COLONY.RESOURCE.AMOUNT"}}</label>
+                        <input name="system.amount" type="number" value="{{system.amount}}" dtype="Number" />
+                    </div>
+                    <div class="stat benefit">
+                        <label>{{localize "COLONY.RESOURCE.IS_ORGANIC"}}</label>
+                        <input type="checkbox" id="toggle" name="system.isOrganic" {{#if system.isOrganic}}checked{{/if}}>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="tab" data-group="primary" data-tab="notes">
+            <div class="notes-editor border">
+                <h1>{{localize "TITLE.NOTES"}}</h1>
+                <div style="height: 100%; width: 100%">
+                    {{editor item.descriptionHTML target="system.description" engine="prosemirror" button=true editable=true}}
+                </div>
+            </div>
+        </div>
+    </div>
+</form>

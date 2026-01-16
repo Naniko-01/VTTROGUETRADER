@@ -1,0 +1,41 @@
+<div class="rogue-trader dialog" style="height: 256px; margin-bottom: 5px;">
+    <div class="flex row wrap background border" style="flex-basis: 100%; align-content: flex-start;">
+        <h1>{{localize name}}</h1>
+        <div class="wrapper">
+            <label>{{localize "DIALOG.USE_RESOURCE"}}</label>
+            <select id="selected-resource" name="resource">
+                {{#each resources as |resource|}}
+                    <option value="{{resource.id}}" {{#if selected}} selected {{/if}}>{{resource.name}}</option>
+                {{/each}}
+            </select>
+        </div>
+        <div class="wrapper">
+            <label>{{localize "DIALOG.RESOURCE.REQUIRED"}}</label>
+            <input name="required-resource" type="number" value="{{requiredResources}}" disabled />
+        </div>
+        <div class="wrapper">
+            <label>{{localize "DIALOG.RESOURCE.AVAILABLE"}}</label>
+            <input id="available-resource" name="available-resource" type="number" value="999" disabled />
+        </div>
+        <div class="separator"></div>
+        <div class="wrapper">
+            <label>{{localize "DIALOG.ROLL_FORMULA"}}</label>
+            <input id="roll-formula" name="roll-formula" type="text" value="{{consumedAmount}}" />
+        </div>
+        <div id="burn-wrapper" class="wrapper">
+            <label for="burn-toggle">Сжечь</label>
+            <input type="checkbox" id="burn-toggle" name="system.burnResources" {{#if burnResources}}checked{{/if}}>
+        </div>
+        <div id="conserve-wrapper" class="wrapper">
+            <label for="conserve-resource-toggle">Conserve Resources</label>
+            <input type="checkbox" id="conserve-resource-toggle" name="system.conserveResources" {{#if conserveResources}}checked{{/if}}>
+        </div>
+        <div id="burn-type-wrapper" class="wrapper">
+            <label>Что сжигаем?</label>
+            <select id="burn-type" name="burnData.burnType">
+                <option value="profitFactor" selected>Фактор Прибыли</option>
+                <option value="growthPoints" >Очки Прироста</option>
+            </select>
+        </div>
+    </div>
+</div>

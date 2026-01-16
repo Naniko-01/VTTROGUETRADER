@@ -1,0 +1,95 @@
+<form class="item-form" autocomplete="off">
+    <div class="header border">
+        <div class="flex row">
+            <div class="avatar">
+                <img class="profile-img" src="{{item.img}}" data-edit="img" title="{{item.name}}" />
+            </div>
+            <div class="flex column grow justify-center">
+                <div class="name header-row">
+                    <label>{{localize "WEAPON.NAME"}}</label>
+                    <input name="name" type="text" value="{{item.name}}" />
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="sheet-tabs tabs flex row" data-group="primary">
+        <b class="item" data-tab="data">{{localize "TAB.DATA"}}</b>
+    </div>
+
+    <div class="sheet-body">
+        <div class="tab" data-group="primary" data-tab="data">
+            <div class="stats border">
+                <h1>{{localize "TITLE.STATS"}}</h1>
+                <div class="stats-row">
+                    <div class="stat class">
+                        <label>{{localize "SHIP_WEAPON.CLASS"}}</label>
+                        <select name="system.class">
+                            {{#select system.class}}
+                                <option value="supplemental">{{localize "SHIP_ITEM.SUPPLEMENTAL"}}</option>
+                                <option value="voidEngine">{{localize "SHIP_ITEM.VOID_ENGINE"}}</option>
+                                <option value="warpEngine">{{localize "SHIP_ITEM.WARP_ENGINE"}}</option>
+                                <option value="gellarField">{{localize "SHIP_ITEM.GELLAR_FIELD"}}</option>
+                                <option value="voidShield">{{localize "SHIP_ITEM.VOID_SHIELD"}}</option>
+                                <option value="bridge">{{localize "SHIP_ITEM.BRIDGE"}}</option>
+                                <option value="lifeSupport">{{localize "SHIP_ITEM.LIFE_SUPPORT"}}</option>
+                                <option value="crewQuarters">{{localize "SHIP_ITEM.CREW_QUARTERS"}}</option>
+                                <option value="augurArrays">{{localize "SHIP_ITEM.AUGUR_ARRAY"}}</option>
+                            {{/select}}
+                        </select>
+                    </div>
+                </div>
+                <div class="stats-row">
+                    <div class="stat power">
+                        <label>{{localize "SHIP_ITEM.POWER"}}</label>
+                        <input name="system.power" type="number" value="{{system.power}}" />
+                    </div>
+                    <div class="stat space">
+                        <label>{{localize "SHIP_ITEM.SPACE"}}</label>
+                        <input name="system.space" type="number" value="{{system.space}}" />
+                    </div>
+                    <div class="stat points">
+                        <label>{{localize "SHIP_ITEM.POINTS"}}</label>
+                        <input name="system.shipPoints" type="number" value="{{system.shipPoints}}" />
+                    </div>
+                </div>
+                <div class="stats-row">
+                    <div class="stat craftsmanship">
+                        <label>{{localize "WEAPON.CRAFTSMANSHIP"}}</label>
+                        <select name="system.craftsmanship">
+                            {{#select system.craftsmanship}}
+                                <option value="poor">{{localize "CRAFTSMANSHIP.POOR"}}</option>
+                                <option value="common">{{localize "CRAFTSMANSHIP.COMMON"}}</option>
+                                <option value="good">{{localize "CRAFTSMANSHIP.GOOD"}}</option>
+                                <option value="best">{{localize "CRAFTSMANSHIP.BEST"}}</option>
+                            {{/select}}
+                        </select>
+                    </div>
+                    <div class="stat availability">
+                        <label>{{localize "WEAPON.AVAILABILITY"}}</label>
+                        <select name="system.availability">
+                            {{#select system.availability}}
+                                <option value="ubiquitous">{{localize "AVAILABILITY.UBIQUITOUS"}}</option>
+                                <option value="abundant">{{localize "AVAILABILITY.ABUNDANT"}}</option>
+                                <option value="plentiful">{{localize "AVAILABILITY.PLENTIFUL"}}</option>
+                                <option value="common">{{localize "AVAILABILITY.COMMON"}}</option>
+                                <option value="average">{{localize "AVAILABILITY.AVERAGE"}}</option>
+                                <option value="scarce">{{localize "AVAILABILITY.SCARCE"}}</option>
+                                <option value="rare">{{localize "AVAILABILITY.RARE"}}</option>
+                                <option value="very-rare">{{localize "AVAILABILITY.VERY_RARE"}}</option>
+                                <option value="extremely-rare">{{localize "AVAILABILITY.EXTREMELY_RARE"}}</option>
+                                <option value="near-unique">{{localize "AVAILABILITY.NEAR_UNIQUE"}}</option>
+                                <option value="unique">{{localize "AVAILABILITY.UNIQUE"}}</option>
+                            {{/select}}
+                        </select>
+                    </div>
+                </div>
+                <h2>{{localize "TITLE.DESCRIPTION"}}</h2>
+                <div class="notes-editor border">
+                    <div style="height: auto; min-height: 200px; width: 100%">
+                        {{editor item.descriptionHTML target="system.description" engine="prosemirror" button=true editable=true}}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>

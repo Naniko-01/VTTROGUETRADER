@@ -1,0 +1,107 @@
+{
+  "id": "rogue-trader",
+  "title": "Rogue Trader",
+  "description": "Roleplaying in the grim darkness of the 41st Millennium",
+  "version": "1.1.2",
+  "minimumCoreVersion" : 10,
+  "compatibility" : {
+    "minimum" : 10,
+    "verified" : 11.315,
+    "maximum" : 11
+  },
+  "templateVersion": 2,
+  "authors": [
+    {
+      "name": "Nachofunk",
+      "url": "https://github.com/nachofunk",
+	  "email": "",
+	  "discord": ""
+    },
+    {
+      "name": "JeansenVaars",
+      "url": "",
+	  "email": "",
+	  "discord": ""
+    },
+    {
+      "name": "Moo Man",
+      "url": "",
+	  "email": "",
+	  "discord": ""
+    },
+    {
+      "name": "fredthedeadhead",
+      "url": "",
+	  "email": "",
+	  "discord": ""
+    },
+    {
+      "name": "Perfectro",
+      "url": "",
+	  "email": "",
+	  "discord": ""
+    },
+    {
+      "name": "Vendare",
+      "url": "https://github.com/vendare",
+	  "email": "",
+	  "discord": ""
+    },
+    {
+      "name": "Silver292",
+      "url": "",
+	  "email": "",
+	  "discord": ""
+    },
+    {
+      "name": "Giddy",
+      "url": "",
+	  "email": "",
+	  "discord": ""
+    },
+    {
+      "name": "Switchu",
+      "url": "https://github.com/LRemplakowski",
+	  "email": "",
+	  "discord": "switchu"
+    },
+    {
+      "name": "Naniko01",
+      "url": "https://github.com/Naniko-01",
+	  "email": "",
+	  "discord": "naniko01"
+    },
+  ],
+  "scripts": [],
+  "esmodules": [
+    "script/common/hooks.js"
+  ],
+  "styles": [
+    "css/rogue-trader.css"
+  ],
+  "packs": [
+    {
+      "name": "character-aptitudes",
+      "label": "Character Aptitudes",
+      "system": "rogue-trader",
+      "path": "./packs/character/aptitudes.db",
+      "type": "Item"
+    }
+  ],
+  "languages": [
+    {
+      "lang": "en",
+      "name": "English",
+      "path": "lang/en.json"
+    }
+  ],
+  "gridDistance": 1,
+  "gridUnits": "m",
+  "primaryTokenAttribute": null,
+  "secondaryTokenAttribute": null,
+  "url": "https://github.com/nachofunk/RogueTrader-FoundryVTT",
+  "socket": true,
+  "manifest": "https://github.com/nachofunk/RogueTrader-FoundryVTT/releases/download/Current/system.json",
+  "download": "https://github.com/nachofunk/RogueTrader-FoundryVTT/releases/download/Current/rogue-trader.zip",
+  "license": "LICENSE.txt"
+}
