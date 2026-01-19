@@ -1896,6 +1896,10 @@ li.folder.collapsed > .folder-header {
   flex-wrap: wrap;
   flex-basis: 25%;
   align-items: center;
+  position: sticky;
+  top: 0;
+  z-index: 10; /* Чтобы блок был выше других элементов при прокрутке */
+  align-self: flex-start;
 }
 .rogue-trader .progression .aptitudes .item-list .header {
   margin-top: 5px;

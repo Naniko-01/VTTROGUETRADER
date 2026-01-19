@@ -252,7 +252,7 @@
   "INSANITY.MENTAL_DISORDER": "Психоз",
 
   "TYPES.Item.ammunition": "Боеприпасы",
-  "TYPES.Item.aptitude": "Склонности",
+  "TYPES.Item.aptitude": "Прошлое",
   "TYPES.Item.armour": "Броня",
 	"TYPES.Item.criticalinjury": "Травма",
   "TYPES.Item.cybernetic": "Кибернетика",
@@ -506,7 +506,7 @@
   "TALENT.COST": "Цена",
   "TALENT.PREREQUISITES": "Требования",
   "TALENT.TIER": "Тир",
-  "TALENT.APTITUDES": "Склонности",
+  "TALENT.APTITUDES": "Специализация",
 
   "TOOL.HEADER": "Инструмент",
   "TOOL.NAME": "Название",
@@ -523,7 +523,7 @@
   "TITLE.CHARACTERISTICS": "ХАРАКТЕРИСТИКИ",
   "TITLE.CORRUPTION": "ПОРЧА",
   "TITLE.SKILLS": "УМЕНИЯ",
-  "TITLE.APTITUDES": "СКЛОННОСТИ",
+  "TITLE.APTITUDES": "ПРОШЛОЕ",
   "TITLE.EXPERIENCE": "ОПЫТ",
   "TITLE.TALENTS": "ТАЛАНТЫ",
   "TITLE.TRAITS": "ЧЕРТЫ",

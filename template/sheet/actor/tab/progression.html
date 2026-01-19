@@ -4,7 +4,7 @@
         <div class="item-list">
             <div class="flex header">
                 <b class="name">{{localize "APTITUDE.NAME"}}</b>
-                <a class="button item-create" title="Add Aptitude" data-type="aptitude"><i class="fas fa-plus"></i></a>
+                <a class="button item-create" title="Добавить Прошлое" data-type="aptitude"><i class="fas fa-plus"></i></a>
             </div>
             <div class="items">
                 {{#each items.aptitudes as |item|}}                    
@@ -15,8 +15,9 @@
                             </div>
                             <div class="name">{{item.name}}</div>
                         </div>
+                        <input class="item-cost" type="number" value="{{#if item.cost}}{{item.cost}}{{else}}0{{/if}}" data-dtype="Number" />
                         <div class="button">
-                            <a class="item-control item-delete" title="Delete Aptitude"><i class="fas fa-trash"></i></a>
+                            <a class="item-control item-delete" title="Удалить Прошлое"><i class="fas fa-trash"></i></a>
                         </div>
                     </div>                    
                 {{/each}}
@@ -29,7 +30,7 @@
             <div class="flex header">
                 <b class="name">{{localize "TALENT.NAME"}}</b>
                 <b class="cost">{{localize "TALENT.COST"}}</b>
-                <a class="button item-create" title="Add Talent" data-type="talent"><i class="fas fa-plus"></i></a>
+                <a class="button item-create" title="Добавить Талант" data-type="talent"><i class="fas fa-plus"></i></a>
             </div>
             <div class="items">
                 {{#each items.talents as |item|}}                    
@@ -42,7 +43,7 @@
                         </div>
                         <input class="item-cost" type="number" value="{{item.cost}}" data-dtype="Number" />
                         <div class="button">
-                            <a class="item-control item-delete" title="Delete Talent"><i class="fas fa-trash"></i></a>
+                            <a class="item-control item-delete" title="Удалить Талант"><i class="fas fa-trash"></i></a>
                         </div>
                     </div>
                 {{/each}}
@@ -141,10 +142,12 @@
                 <div class="flex header">
                     <b class="name">{{localize "PSYCHIC_POWER.NAME"}}</b>
                     <b class="cost">{{localize "PSYCHIC_POWER.COST"}}</b>
-                    <a class="button item-create" title="Add Psychic Power" data-type="psychicPower"><i class="fas fa-plus"></i></a>
+                    <a class="button item-create" title="Добавить Способность Псайкера" data-type="psychicPower"><i class="fas fa-plus"></i></a>
+                    &ensp;
+                    <a class="button item-create" title="Добавить Силу Навигатора" data-type="navigator"><i class="fas fa-plus"></i></a>
                 </div>
                 <div class="items">
-                    {{#each items.psychicPowers as |item|}}                        
+                    {{#each items.psychicPowers as |item|}}                          
                         <div class="psychic-power item flex row" data-item-id="{{item.id}}">
                             <div class="flex psychic-powers-row item-edit">
                                 <div class="image-container">
@@ -154,7 +157,21 @@
                             </div>
                             <input class="item-cost" type="number" value="{{item.cost}}" data-dtype="Number" />
                             <div class="button">
-                                <a class="item-control item-delete" title="Delete Psychic Power"><i class="fas fa-trash"></i></a>
+                                <a class="item-control item-delete" title="Удалить Силу Псайкера"><i class="fas fa-trash"></i></a>
+                            </div>
+                        </div>
+                    {{/each}}
+                        {{#each items.navigator as |item|}}                        
+                        <div class="navigator item flex row" data-item-id="{{item.id}}">
+                            <div class="flex psychic-powers-row item-edit">
+                                <div class="image-container">
+                                    <div class="image" style="background-image: url('{{item.img}}')"></div>
+                                </div>
+                                <div class="name">{{item.name}}</div>
+                            </div>
+                            <input class="item-cost" type="number" value="{{#if item.cost}}{{item.cost}}{{else}}0{{/if}}" data-dtype="Number" />
+                            <div class="button">
+                                <a class="item-control item-delete" title="Удалить Силу Навигатора"><i class="fas fa-trash"></i></a>
                             </div>
                         </div>
                     {{/each}}

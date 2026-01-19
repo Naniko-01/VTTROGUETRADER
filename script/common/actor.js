@@ -387,6 +387,8 @@ _computeSkills() {
     this.experience.spentSkills = 0;
     this.experience.spentTalents = 0;
     this.experience.spentPsychicPowers = this.psy.cost;
+    this.experience.spentNavigator = 0;
+    this.experience.spentAptitudes = 0;
     for (let characteristic of Object.values(this.characteristics)) {
       this.experience.spentCharacteristics += parseInt(characteristic.cost, 10);
     }
@@ -404,13 +406,19 @@ _computeSkills() {
         this.experience.spentTalents += parseInt(item.cost, 10);
       } else if (item.isPsychicPower) {
         this.experience.spentPsychicPowers += parseInt(item.cost, 10);
-      }
+      } else if (item.isNavigator) {
+        this.experience.spentNavigator += parseInt(item.cost || 0, 10);
+      }  else if (item.isAptitude) {
+        this.experience.spentAptitudes += parseInt(item.cost || 0, 10);
+    }
     }
     this.experience.totalSpent = 4500
       + this.experience.spentCharacteristics
       + this.experience.spentSkills
       + this.experience.spentTalents
-      + this.experience.spentPsychicPowers;
+      + this.experience.spentPsychicPowers
+      + this.experience.spentNavigator
+      + this.experience.spentAptitudes;
     if (this.experience.value < 5000) {
       this.experience.value = 5000;
     }
@@ -500,18 +508,27 @@ _computeSkills() {
     this.armour.rightLeg.total += this.armour.rightLeg.value;
   }
 
-  _computeMovement() {
+_computeMovement() {
     let agility = this.characteristics.agility;
-    // Используем только базовый бонус ловкости (без unnaturalModifier)
     let agilityBonus = Math.floor(agility.total / 10);
     let size = this.size;
+    
+    // Сохраняем существующие значения total перед обновлением
+    const currentTotal = this.system.movement?.total;
+    
+    // Обновляем базовые вычисляемые значения
     this.system.movement = {
-      half: agilityBonus + size - 4,
-      full: (agilityBonus + size - 4) * 2,
-      charge: (agilityBonus + size - 4) * 3,
-      run: (agilityBonus + size - 4) * 6
+        half: agilityBonus + size - 4,
+        full: (agilityBonus + size - 4) * 2,
+        charge: (agilityBonus + size - 4) * 3,
+        run: (agilityBonus + size - 4) * 6
     };
-  }
+    
+    // Восстанавливаем total, если он был
+    if (currentTotal) {
+        this.system.movement.total = currentTotal;
+    }
+}
 
   _findCharacteristic(short) {
     for (let characteristic of Object.values(this.characteristics)) {
@@ -998,6 +1015,8 @@ _computeSkills() {
   get encumbrance() { return this.system.encumbrance; }
 
   get movement() { return this.system.movement; }
+
+  get movementtotal() { return this.system.movement.total; }
 
   get crewSkillValue() {
     switch (this.system.crewSkill) {

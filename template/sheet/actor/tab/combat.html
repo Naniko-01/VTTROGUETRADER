@@ -109,27 +109,27 @@
                                         <input type="number" value="{{system.movement.run}}" data-dtype="Number" disabled />
                                         </div>
                             </div>
-                        <div class="item-list colony-stat-column border">
-                            <div class="flex header">
-                             <label>{{localize "TITLE.MOVEMENTTOTAL"}}</label>
-                             </div>
-                                    <div class="information">
-                                    <label>{{localize "MOVEMENT.HALF"}}</label>
-                                    <input type="number" data-dtype="Number"/>
-                                    </div>
-                                        <div class="information">
-                                        <label>{{localize "MOVEMENT.FULL"}}</label>
-                                        <input type="number" data-dtype="Number"/>
-                                        </div>
-                                    <div class="information">
-                                    <label>{{localize "MOVEMENT.CHARGE"}}</label>
-                                    <input type="number" data-dtype="Number"/>
-                                    </div>
-                                        <div class="information">
-                                        <label>{{localize "MOVEMENT.RUN"}}</label>
-                                        <input type="number" data-dtype="Number"/>
-                                        </div>
-                        </div>
+    <div class="item-list colony-stat-column border">
+    <div class="flex header">
+        <label>{{localize "TITLE.MOVEMENTTOTAL"}}</label>
+    </div>
+    <div class="information">
+        <label>{{localize "MOVEMENT.HALF"}}</label>
+        <input name="system.movement.total.half" type="number" value="{{#if system.movement.total.half}}{{system.movement.total.half}}{{else}}0{{/if}}" data-dtype="Number" />
+    </div>
+    <div class="information">
+        <label>{{localize "MOVEMENT.FULL"}}</label>
+        <input name="system.movement.total.full" type="number" value="{{#if system.movement.total.full}}{{system.movement.total.full}}{{else}}0{{/if}}" data-dtype="Number" />
+    </div>
+    <div class="information">
+        <label>{{localize "MOVEMENT.CHARGE"}}</label>
+        <input name="system.movement.total.charge" type="number" value="{{#if system.movement.total.charge}}{{system.movement.total.charge}}{{else}}0{{/if}}" data-dtype="Number" />
+    </div>
+    <div class="information">
+        <label>{{localize "MOVEMENT.RUN"}}</label>
+        <input name="system.movement.total.run" type="number" value="{{#if system.movement.total.run}}{{system.movement.total.run}}{{else}}0{{/if}}" data-dtype="Number" />
+    </div>
+</div>
                         </div>
         <h1 style="margin-top: 5px">{{localize "TITLE.OTHER"}}</h1>
         <div class="information initiative">
@@ -188,58 +188,91 @@
         </div>
     </div>
     <div class="psychic-powers border">
-        <h1>{{localize "TITLE.PSYCHIC_POWERS"}}</h1>
-        <div class="information">
-            <div class="class">
-                <label>{{localize "PSYCHIC_POWER.CLASS"}}</label>
-                <select disabled>
-                    {{#select system.psy.class}}
-                        <option value="bound">{{localize "PSYCHIC_POWER.BOUND"}}</option>
-                        <option value="unbound">{{localize "PSYCHIC_POWER.UNBOUND"}}</option>
-                        <option value="daemonic">{{localize "PSYCHIC_POWER.DAEMONIC"}}</option>
-                    {{/select}}
-                </select>
+                       {{#if system.psypowerswitch}}{{/if}}
+        <div class="psychic-section hbody" style="{{#if system.psypowerswitch}}display:none;{{else}}display:block;{{/if}}">
+            <h1>{{localize "TITLE.PSYCHIC_POWERS"}}</h1>
+            <div class="information">
+                <div class="class">
+                    <label>{{localize "PSYCHIC_POWER.CLASS"}}</label>
+                    <select disabled>
+                        {{#select system.psy.class}}
+                            <option value="bound">{{localize "PSYCHIC_POWER.BOUND"}}</option>
+                            <option value="unbound">{{localize "PSYCHIC_POWER.UNBOUND"}}</option>
+                            <option value="daemonic">{{localize "PSYCHIC_POWER.DAEMONIC"}}</option>
+                        {{/select}}
+                    </select>
+                </div>
+                <div class="rating">
+                    <label>{{localize "PSYCHIC_POWER.RATING"}}</label>
+                    <input type="number" value="{{system.psy.currentRating}}" data-dtype="Number" disabled />
+                </div>
+                <div class="sustained">
+                    <label>{{localize "PSYCHIC_POWER.SUSTAINED"}}</label>
+                    <input name="system.psy.sustained" type="number" value="{{system.psy.sustained}}" data-dtype="Number" />
+                </div>
             </div>
-            <div class="rating">
-                <label>{{localize "PSYCHIC_POWER.RATING"}}</label>
-                <input type="number" value="{{system.psy.currentRating}}" data-dtype="Number" disabled />
-            </div>
-            <div class="sustained">
-                <label>{{localize "PSYCHIC_POWER.SUSTAINED"}}</label>
-                <input name="system.psy.sustained" type="number" value="{{system.psy.sustained}}" data-dtype="Number" />
+            <div class="item-list">
+                <div class="flex header">
+                    <b class="name">{{localize "PSYCHIC_POWER.NAME"}}</b>
+                    <b class="action">{{localize "PSYCHIC_POWER.ACTION"}}</b>
+                    <b class="range">{{localize "PSYCHIC_POWER.RANGE"}}</b>
+                    <b class="sustained">{{localize "PSYCHIC_POWER.SUSTAINED"}}</b>
+                    <b class="zone">{{localize "PSYCHIC_POWER.ZONE"}}</b>
+                    <b class="damage">{{localize "PSYCHIC_POWER.DAMAGE"}}</b>
+                    <b class="damage-type">{{localize "PSYCHIC_POWER.DAMAGE_TYPE"}}</b>
+                    <b class="penetration">{{localize "PSYCHIC_POWER.PENETRATION"}}</b>
+                    <b class="special">{{localize "PSYCHIC_POWER.SPECIAL"}}</b>
+                </div>
+                <div class="items">
+                    {{#each items.psychicPowers as |item|}}                    
+                        <div class="weapon item flex row" data-item-id="{{item.id}}">
+                            <div class="flex name">
+                                <div class="image-container">
+                                    <div class="image" style="background-image: url('{{item.img}}')"></div>
+                                </div>
+                                <button class="roll-psychic-power" type="button">{{item.name}}</button>
+                            </div>
+                            <div class="action">{{item.action}}</div>
+                            <div class="range">{{item.range}}</div>
+                            <div class="sustained">{{item.sustained}}</div>
+                            <div class="zone">{{item.PsychicPowerZone}}</div>
+                            <div class="damage">{{item.damage.formula}}</div>
+                            <div class="damage-type">{{item.DamageTypeShort}}</div>
+                            <div class="penetration">{{item.damage.penetration}}</div>
+                            <div class="special">{{item.damage.special}}</div>
+                        </div>                    
+                    {{/each}}
+                </div>
             </div>
         </div>
-        <div class="item-list">
-            <div class="flex header">
-                <b class="name">{{localize "PSYCHIC_POWER.NAME"}}</b>
-                <b class="action">{{localize "PSYCHIC_POWER.ACTION"}}</b>
-                <b class="range">{{localize "PSYCHIC_POWER.RANGE"}}</b>
-                <b class="sustained">{{localize "PSYCHIC_POWER.SUSTAINED"}}</b>
-                <b class="zone">{{localize "PSYCHIC_POWER.ZONE"}}</b>
-                <b class="damage">{{localize "PSYCHIC_POWER.DAMAGE"}}</b>
-                <b class="damage-type">{{localize "PSYCHIC_POWER.DAMAGE_TYPE"}}</b>
-                <b class="penetration">{{localize "PSYCHIC_POWER.PENETRATION"}}</b>
-                <b class="special">{{localize "PSYCHIC_POWER.SPECIAL"}}</b>
-            </div>
-            <div class="items">
-                {{#each items.psychicPowers as |item|}}                    
-                    <div class="weapon item flex row" data-item-id="{{item.id}}">
-                        <div class="flex name">
-                            <div class="image-container">
-                                <div class="image" style="background-image: url('{{item.img}}')"></div>
+        
+        <!-- Секция Навигатора (показывается при psypowerswitch=true) -->
+        <div class="navigator-section hbody2" style="{{#if system.psypowerswitch}}display:block;{{else}}display:none;{{/if}}">
+            <h1>{{localize "TITLE.NAVIGATOR"}}</h1>
+            <div class="item-list">
+                <div class="flex header">
+                    <b class="name">{{localize "PSYCHIC_POWER.NAME"}}</b>
+                    <b class="short">Уровень Владения</b>
+                    <b class="action">{{localize "PSYCHIC_POWER.ACTION"}}</b>
+                    <b class="range">{{localize "PSYCHIC_POWER.RANGE"}}</b>
+                    <b class="special">{{localize "PSYCHIC_POWER.SPECIAL"}}</b>
+                </div>
+                <div class="items">
+                    {{#each items.navigator as |item|}}
+                        <div class="navigator item flex row" data-item-id="{{item.id}}">
+                            <div class="flex name">
+                                <div class="image-container">
+                                    <div class="image" style="background-image: url('{{item.img}}')"></div>
+                                </div>
+                                <div>{{item.name}}</div>
                             </div>
-                            <button class="roll-psychic-power" type="button">{{item.name}}</button>
+                            <div class="short">{{item.skillLevel}}</div>
+                            <div class="action">{{item.action}}</div>
+                            <div class="range">{{item.range}}</div>
+                            <div class="special">{{item.special}}</div>
                         </div>
-                        <div class="action">{{item.action}}</div>
-                        <div class="range">{{item.range}}</div>
-                        <div class="sustained">{{item.sustained}}</div>
-                        <div class="zone">{{item.PsychicPowerZone}}</div>
-                        <div class="damage">{{item.damage.formula}}</div>
-                        <div class="damage-type">{{item.DamageTypeShort}}</div>
-                        <div class="penetration">{{item.damage.penetration}}</div>
-                        <div class="special">{{item.damage.special}}</div>
-                    </div>                    
-                {{/each}}
+                    {{/each}}
+                </div>
             </div>
         </div>
     </div>
