@@ -6,6 +6,11 @@ It provides support for **character sheets only**, game content should be drawn 
 
 The project is being continued under the GPL-3.0 License based on the original work for [Dark Heresy 2E](https://github.com/Vendare/DarkHeresy2E-FoundryVTT) and it's authors.
 
+The modified kernel for this project is taken from here and it's authors [Rogue Trader](https://github.com/nachofunk/RogueTrader-FoundryVTT)
+At the moment, the project only supports Russian and some languages ​​from the original project.
+
+**AI product containing**
+
 <!-- ## Install
 1. Go to the setup page and choose **Game Systems**.
 2. Click the **Install System** button, and paste in this [manifest link](https://raw.githubusercontent.com/moo-man/DarkHeresy2E-FoundryVTT/master/system.json)
