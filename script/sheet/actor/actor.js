@@ -21,6 +21,7 @@ export class RogueTraderSheet extends ActorSheet {
     
     // ===== ДОБАВЛЕНО: Обработчик для переключателя псикера/навигатора =====
     html.find('input[name="attr_psypowerswitch"]').change(ev => this._onPsypowerSwitch(ev));
+    html.find('.roll-navigator').click(async ev => await this._prepareRollNavigator(ev));
   }
 
   /** @override */
@@ -60,6 +61,59 @@ export class RogueTraderSheet extends ActorSheet {
     }
     return buttons;
   }
+
+async _prepareRollNavigator(event) {
+    event.preventDefault();
+    const div = $(event.currentTarget).parents('.item');
+    const item = this.actor.items.get(div.data('item-id'));
+    
+    if (!item) return;
+    
+    // Определяем модификатор на основе уровня владения
+    const skillLevelModifiers = {
+        novice: 0,
+        adept: 10,
+        master: 20
+    };
+    
+    const skillLevel = item.system.skillLevel || "novice";
+    const skillModifier = skillLevelModifiers[skillLevel] || 0;
+    
+    // Локализованное отображение уровня
+    const skillLevelDisplay = {
+        novice: game.i18n.localize("TITLE.NOVICE"),
+        adept: game.i18n.localize("TITLE.ADEPT"),
+        master: game.i18n.localize("TITLE.MASTER")
+    }[skillLevel] || skillLevel;
+    
+    // Подготавливаем данные для броска навигатора
+    const rollData = {
+        name: item.name,
+        baseTarget: this.actor.system.characteristics.willpower.total,
+        modifier: 0, // Начальное значение пользовательского модификатора - 0
+        
+        // Данные об уровне владения
+        skillLevel: skillLevel,
+        skillLevelDisplay: skillLevelDisplay,
+        skillLevelModifier: skillModifier, // Фиксированный бонус от уровня
+        
+        // Описания из вкладок навигатора
+        descriptionNovice: item.system.descriptionNovice ? 
+            TextEditor.enrichHTML(item.system.descriptionNovice) : "",
+        descriptionAdept: item.system.descriptionAdept ? 
+            TextEditor.enrichHTML(item.system.descriptionAdept) : "",
+        descriptionMaster: item.system.descriptionMaster ? 
+            TextEditor.enrichHTML(item.system.descriptionMaster) : "",
+        
+        itemId: item.id,
+        ownerId: this.actor.id,
+        isNavigator: true
+    };
+    
+    // Вызываем диалог для броска навигатора
+    const { prepareNavigatorRoll } = await import("../../common/dialog.js");
+    await prepareNavigatorRoll(rollData);
+}
 
   // ===== ДОБАВЛЕНО: Метод для обработки изменения переключателя =====
    async _onPsypowerSwitch(event) {

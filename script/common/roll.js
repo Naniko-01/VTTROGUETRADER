@@ -248,6 +248,9 @@ function _getUnnaturalDoS(unnatural)
     return 0;
 }
 
+
+
+
 /**
  * Handle rolling and collecting parts of a combat damage roll.
  * @param {object} rollData

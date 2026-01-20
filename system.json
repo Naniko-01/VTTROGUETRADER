@@ -67,7 +67,7 @@
     },
     {
       "name": "Naniko01",
-      "url": "https://github.com/Naniko-01",
+      "url": "https://github.com/vendare",
 	  "email": "",
 	  "discord": "naniko01"
     }
@@ -99,9 +99,9 @@
   "gridUnits": "m",
   "primaryTokenAttribute": null,
   "secondaryTokenAttribute": null,
-  "url": "https://github.com/nachofunk/RogueTrader-FoundryVTT",
+  "url": "https://github.com/Naniko-01/VTTROGUETRADER",
   "socket": true,
-  "manifest": "https://github.com/nachofunk/RogueTrader-FoundryVTT/releases/download/Current/system.json",
-  "download": "https://github.com/nachofunk/RogueTrader-FoundryVTT/releases/download/Current/rogue-trader.zip",
+  "manifest": "https://github.com/Naniko-01/VTTROGUETRADER/releases/download/Current/system.json",
+  "download": "https://github.com/Naniko-01/VTTROGUETRADER/releases/download/Current/rogue-trader.zip",
   "license": "LICENSE.txt"
 }

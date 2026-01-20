@@ -56,6 +56,13 @@
                     <p><strong>{{localize "CHAT.DOF"}}:</strong> {{dof}}</p>
                 {{/if}}
             {{/if}}
+                    {{#if isNavigatorRoll}}
+                    <div class="navigator-description" style="margin-top: 15px; padding: 10px; border-top: 1px solid #000000; background-color: rgba(0,0,0,0.1);">
+                     <div class="description-content" style="font-size: 16px; line-height: 1; color: #000000;">
+                    {{{navigatorDescription}}}
+                    </div>
+                    </div>
+                    {{/if}}
             {{#if psy.display}}
                 {{#if (eq psy.psyStrength "push")}}
                 <p><strong>{{localize "CHAT.PSY_RATING"}}:</strong> {{psy.value}} ({{localize "CHAT.PSY_PUSH"}})</p>
@@ -115,4 +122,5 @@
             {{/if}}
         {{/each}}
     </div>
+    
 </div>

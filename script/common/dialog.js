@@ -399,6 +399,266 @@ export async function preparePsychicPowerRoll(rollData) {
   dialog.render(true);
 }
 
+/**
+ * Show a navigator power roll dialog.
+ * @param {object} rollData
+ */
+
+export async function prepareNavigatorRoll(rollData) {
+  // Получаем актора и предмет навигатора
+  const actor = game.actors.get(rollData.ownerId);
+  const item = actor.items.get(rollData.itemId);
+  
+  // Извлекаем HTML содержимое из редакторов
+  let descriptionNovice = "";
+  let descriptionAdept = "";
+  let descriptionMaster = "";
+  
+  if (item.system.descriptionNovice) {
+    descriptionNovice = await TextEditor.enrichHTML(item.system.descriptionNovice, {async: true});
+  }
+  if (item.system.descriptionAdept) {
+    descriptionAdept = await TextEditor.enrichHTML(item.system.descriptionAdept, {async: true});
+  }
+  if (item.system.descriptionMaster) {
+    descriptionMaster = await TextEditor.enrichHTML(item.system.descriptionMaster, {async: true});
+  }
+  
+  // Определяем модификатор на основе уровня владения
+  const skillLevelModifiers = {
+    novice: 0,
+    adept: 10,
+    master: 20
+  };
+  
+  const skillLevel = rollData.skillLevel || "novice";
+  const skillLevelModifier = skillLevelModifiers[skillLevel] || 0;
+  
+  // Локализованное отображение уровня
+  const skillLevelDisplay = {
+    novice: game.i18n.localize("TITLE.NOVICE"),
+    adept: game.i18n.localize("TITLE.ADEPT"),
+    master: game.i18n.localize("TITLE.MASTER")
+  }[skillLevel] || skillLevel;
+  
+  // Рассчитываем итоговую цель с учетом скрытого бонуса
+  const baseTarget = rollData.baseTarget || 0;
+  const initialModifier = rollData.modifier || 0;
+  const finalTarget = baseTarget + skillLevelModifier + initialModifier;
+  
+  const html = await renderTemplate("systems/rogue-trader/template/dialog/navigator-roll.html", {
+    ...rollData,
+    skillLevelDisplay: skillLevelDisplay,
+    skillLevelModifier: skillLevelModifier,
+    baseTarget: baseTarget,
+    modifier: initialModifier, // Только ручной модификатор
+    finalTarget: finalTarget,
+    descriptionNovice: descriptionNovice,
+    descriptionAdept: descriptionAdept,
+    descriptionMaster: descriptionMaster,
+    system: {
+      chat: {
+        skillLevel: skillLevel
+      }
+    }
+  });
+  
+  let dialog = new Dialog({
+    title: rollData.name,
+    content: html,
+    buttons: {
+      roll: {
+        icon: '<i class="fas fa-check"></i>',
+        label: game.i18n.localize("BUTTON.ROLL"),
+        callback: async html => {
+          // Получаем значения из формы
+          const finalTargetValue = parseInt(html.find('#finalTarget').val(), 10);
+          const manualModifier = parseInt(html.find('#modifier').val(), 10);
+          const skillLevelModifierValue = parseInt(html.find('#skillLevelModifier').val(), 10);
+          const baseTargetValue = parseInt(html.find('#target').val(), 10);
+          const selectedSkillLevel = html.find('select[name="system.сhat.skillLevel"]').val();
+          
+          // Получаем описания из скрытых полей
+          const descriptionNoviceValue = html.find('#descriptionNovice').val();
+          const descriptionAdeptValue = html.find('#descriptionAdept').val();
+          const descriptionMasterValue = html.find('#descriptionMaster').val();
+          
+          // Определяем описание в зависимости от выбранного уровня
+          let navigatorDescription = "";
+          switch(selectedSkillLevel) {
+            case 'novice':
+              navigatorDescription = descriptionNoviceValue;
+              break;
+            case 'adept':
+              navigatorDescription = descriptionAdeptValue;
+              break;
+            case 'master':
+              navigatorDescription = descriptionMasterValue;
+              break;
+          }
+          
+          // Создаем данные для броска
+          const finalRollData = {
+            name: rollData.name,
+            baseTarget: baseTargetValue,
+            modifier: manualModifier,
+            ownerId: rollData.ownerId,
+            itemId: rollData.itemId,
+            isCombatTest: false,
+            unnatural: rollData.unnatural || 0,
+            
+            // Специальные данные для навигатора
+            skillLevelDisplay: skillLevelDisplay,
+            skillLevelModifier: skillLevelModifierValue,
+            skillLevel: selectedSkillLevel,
+            descriptionNovice: descriptionNoviceValue,
+            descriptionAdept: descriptionAdeptValue,
+            descriptionMaster: descriptionMasterValue,
+            navigatorDescription: navigatorDescription,
+            isNavigatorRoll: true,
+            
+            // Расчетная итоговая цель
+            calculatedTarget: finalTargetValue
+          };
+          
+          await navigatorCommonRoll(finalRollData);
+        }
+      },
+      cancel: {
+        icon: '<i class="fas fa-times"></i>',
+        label: game.i18n.localize("BUTTON.CANCEL"),
+        callback: () => {}
+      }
+    },
+    default: "roll",
+    close: () => {},
+    render: html => {
+      // Получаем элементы DOM
+      const baseTargetInput = html.find('#target');
+      const skillLevelModifierInput = html.find('#skillLevelModifier');
+      const modifierInput = html.find('#modifier');
+      const finalTargetInput = html.find('#finalTarget');
+      
+      // Функция для расчета итоговой цели
+      const calculateFinalTarget = () => {
+        const baseTarget = parseInt(baseTargetInput.val()) || 0;
+        const skillLevelModifier = parseInt(skillLevelModifierInput.val()) || 0;
+        const modifier = parseInt(modifierInput.val()) || 0;
+        
+        // Итоговая цель = базовая цель + скрытый бонус + модификатор
+        const finalTarget = baseTarget + skillLevelModifier + modifier;
+        finalTargetInput.val(finalTarget);
+      };
+      
+      // Назначаем обработчик события input на поле модификатора
+      modifierInput.on('input', calculateFinalTarget);
+      
+      // Инициализируем расчет при первом рендере
+      calculateFinalTarget();
+    }
+  }, { width: 210 });
+  
+  dialog.render(true);
+}
+
+export async function navigatorCommonRoll(rollData) {
+  // Вычисляем цель и делаем бросок
+  const finalTarget = rollData.calculatedTarget || (rollData.baseTarget + rollData.skillLevelModifier + rollData.modifier);
+  
+  // Бросаем d100
+  let r = new Roll("1d100");
+  r.evaluate({ async: false });
+  
+  const result = r.total;
+  const isSuccess = result <= finalTarget;
+  
+  // Вычисляем степени успеха/провала
+  let dos = 0;
+  let dof = 0;
+  
+  if (isSuccess) {
+    dos = Math.floor((finalTarget - result) / 10);
+    if (rollData.unnatural) {
+      dos += Math.ceil(rollData.unnatural / 2);
+    }
+  } else {
+    dof = Math.floor((result - finalTarget) / 10);
+  }
+  
+  // Подготавливаем данные для отправки в чат
+  const chatRollData = {
+    name: rollData.name,
+    target: finalTarget,
+    result: result,
+    isSuccess: isSuccess,
+    dos: dos,
+    dof: dof,
+    showDoS: true,
+    modifier: rollData.originalModifier || 0,
+    
+    // Данные навигатора
+    isNavigatorRoll: true,
+    skillLevelDisplay: rollData.skillLevelDisplay,
+    skillLevelModifier: rollData.skillLevelModifier,
+    skillLevel: rollData.skillLevel,
+    navigatorDescription: rollData.navigatorDescription || '',
+    
+    // Для рендеринга
+    rollObject: r,
+    render: await r.render(),
+    
+    // ID для связи с актором/предметом
+    ownerId: rollData.ownerId,
+    itemId: rollData.itemId,
+    
+    // Сохраняем оригинальные цели для отображения
+    originalBaseTarget: rollData.originalBaseTarget || rollData.baseTarget,
+    originalModifier: rollData.originalModifier || rollData.modifier
+  };
+  
+  // Отправляем в чат
+  await _sendNavigatorToChat(chatRollData);
+}
+
+/**
+ * Отправка сообщения навигатора в чат
+ * @param {object} rollData 
+ */
+async function _sendNavigatorToChat(rollData) {
+  let speaker = ChatMessage.getSpeaker();
+  let chatData = {
+    user: game.user.id,
+    type: CONST.CHAT_MESSAGE_TYPES.ROLL,
+    rollMode: game.settings.get("core", "rollMode"),
+    speaker: speaker,
+    flags: {
+      "rogue-trader.rollData": rollData
+    }
+  };
+  
+  if (speaker.token) {
+    rollData.tokenId = speaker.token;
+  }
+
+  if (rollData.rollObject) {
+    rollData.render = await rollData.rollObject.render();
+    chatData.roll = rollData.rollObject;
+  } else {
+    rollData.render = "";
+  }
+
+  const html = await renderTemplate("systems/rogue-trader/template/chat/roll.html", rollData);
+  chatData.content = html;
+
+  if (["gmroll", "blindroll"].includes(chatData.rollMode)) {
+    chatData.whisper = ChatMessage.getWhisperRecipients("GM");
+  } else if (chatData.rollMode === "selfroll") {
+    chatData.whisper = [game.user];
+  }
+
+  ChatMessage.create(chatData);
+}
+
 export function getRollPsyRating(rollData) {  
   // Initialize Psy Rating variable
   let psyRating = 0;

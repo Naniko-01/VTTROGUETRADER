@@ -79,6 +79,8 @@ export class RogueTraderItemSheet extends ItemSheet {
   
   async getData(options) {
     let data = super.getData(options);
+
+    
         // Item HTML enrichment
     data.item.descriptionHTML = await TextEditor.enrichHTML(
       data.item.description,
@@ -89,6 +91,41 @@ export class RogueTraderItemSheet extends ItemSheet {
         relativeTo: this.item,
       }
     );
+        if (data.item.system.descriptionNovice) {
+      data.item.system.descriptionNoviceHTML = await TextEditor.enrichHTML(
+        data.item.system.descriptionNovice,
+        {
+          secrets: data.item.isOwner,
+          rollData: data.rollData,
+          async: true,
+          relativeTo: this.item,
+        }
+      );
+    }
+    
+    if (data.item.system.descriptionAdept) {
+      data.item.system.descriptionAdeptHTML = await TextEditor.enrichHTML(
+        data.item.system.descriptionAdept,
+        {
+          secrets: data.item.isOwner,
+          rollData: data.rollData,
+          async: true,
+          relativeTo: this.item,
+        }
+      );
+    }
+    
+    if (data.item.system.descriptionMaster) {
+      data.item.system.descriptionMasterHTML = await TextEditor.enrichHTML(
+        data.item.system.descriptionMaster,
+        {
+          secrets: data.item.isOwner,
+          rollData: data.rollData,
+          async: true,
+          relativeTo: this.item,
+        }
+      );
+    }
     // Component HTML enrichment
     data.data.system.essentialComponentsHTML = await TextEditor.enrichHTML(
       data.data.system.essentialComponents,

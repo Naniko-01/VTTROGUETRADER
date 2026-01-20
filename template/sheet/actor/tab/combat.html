@@ -253,9 +253,6 @@
                 <div class="flex header">
                     <b class="name">{{localize "PSYCHIC_POWER.NAME"}}</b>
                     <b class="short">Уровень Владения</b>
-                    <b class="action">{{localize "PSYCHIC_POWER.ACTION"}}</b>
-                    <b class="range">{{localize "PSYCHIC_POWER.RANGE"}}</b>
-                    <b class="special">{{localize "PSYCHIC_POWER.SPECIAL"}}</b>
                 </div>
                 <div class="items">
                     {{#each items.navigator as |item|}}
@@ -264,12 +261,9 @@
                                 <div class="image-container">
                                     <div class="image" style="background-image: url('{{item.img}}')"></div>
                                 </div>
-                                <div>{{item.name}}</div>
+                                 <button class="roll-navigator" type="button">{{item.name}}</button>
                             </div>
                             <div class="short">{{item.skillLevel}}</div>
-                            <div class="action">{{item.action}}</div>
-                            <div class="range">{{item.range}}</div>
-                            <div class="special">{{item.special}}</div>
                         </div>
                     {{/each}}
                 </div>

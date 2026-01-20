@@ -131,6 +131,26 @@
 .navigator-section[style*="display:block"] {
     display: block !important;
 }
+
+.navigator-description {
+    margin-top: 15px;
+    padding: 10px;
+    border-top: 1px solid var(--color-border-light);
+    background-color: rgba(0, 0, 0, 0.1);
+}
+
+.navigator-description h4 {
+    color: var(--color-text-light);
+    margin-bottom: 8px;
+    font-size: 14px;
+}
+
+.navigator-description .description-content {
+    font-size: 12px;
+    line-height: 1.4;
+    color: var(--color-text-dark);
+}
+
 .rogue-trader .space10 {
   margin-bottom: 10px;
 }

@@ -1,0 +1,34 @@
+<div class="rogue-trader dialog">
+            <input type="hidden" id="skillLevelModifier" value="{{skillLevelModifier}}" />
+        <input type="hidden" id="descriptionNovice" value="{{descriptionNovice}}" />
+        <input type="hidden" id="descriptionAdept" value="{{descriptionAdept}}" />
+        <input type="hidden" id="descriptionMaster" value="{{descriptionMaster}}" />
+    <div class="flex row wrap background border" style="flex-basis: 100%;margin-bottom: 5px">
+        <h1>{{localize name}}</h1>
+      
+        <!-- Отображение уровня владения -->
+        <div class="wrapper">
+            <label>{{localize "TITLE.NA_SKILL"}}:</label>
+                <span class="skill-level-value">{{skillLevelDisplay}}</span>
+                <span class="skill-level-modifier">(+{{skillLevelModifier}})</span>
+        </div>
+        <div class="wrapper">
+        <label>{{localize "TITLE.NA_LEVEL"}}</label>
+                    <select name="system.сhat.skillLevel" type="text" value="{{system.сhat.skillLevel}}">
+                        {{#select system.сhat.skillLevel}}
+                            <option value="novice">{{localize "TITLE.NOVICE"}}</option>
+                            <option value="adept">{{localize "TITLE.ADEPT"}}</option>
+                            <option value="master">{{localize "TITLE.MASTER"}}</option>
+                        {{/select}}
+                    </select>
+                    </div>
+        <div class="wrapper">
+            <label>{{localize "DIALOG.TARGET"}}</label>
+            <input id="target" type="number" value="{{baseTarget}}" data-dtype="Number" />
+        </div>
+        <div class="wrapper">
+            <label>{{localize "DIALOG.MODIFIER"}}</label>
+            <input id="modifier" type="number" value="{{modifier}}" data-dtype="Number" />
+        </div>
+    </div>  
+</div>
