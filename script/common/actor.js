@@ -297,6 +297,8 @@ _computeSkills() {
         let characteristic = this._findCharacteristic(short);
         const skillMod = skillMods[key];
         
+        if (!skillMod) continue;
+        
         // Расчет для основного скилла
         if (skill.advance === -20) {
             skill.total = Math.floor(characteristic.total / 2) + (skill.isSpecialist ? 0 : skillMod.skillModifier);
@@ -309,9 +311,11 @@ _computeSkills() {
         skill.advanceSkill = this._getAdvanceSkill(skill.advance);
         
         if (skill.isSpecialist) {
-            for (const specKey of Object.keys(skill.specialities)) {
+            for (const specKey of Object.keys(skill.specialities || {})) {
                 const speciality = skill.specialities[specKey];
                 const specMod = skillMods[key][specKey];
+                
+                if (!specMod) continue;
                 
                 // Расчет для специализации
                 if (speciality.advance === -20) {
@@ -326,50 +330,88 @@ _computeSkills() {
                 speciality.isKnown = speciality.advance >= -10;
                 
                 speciality.advanceSpec = this._getAdvanceSkill(speciality.advance);
+                
+                // ДОБАВЛЕНО: Убедимся, что isCustom установлен для кастомных специализаций
+                if (specKey.startsWith('custom_') && speciality.isCustom === undefined) {
+                    speciality.isCustom = true;
+                }
             }
         }
     }
 }
 
-  _getSkillBonuses() {
+// В методе _getSkillBonuses в actor.js
+_getSkillBonuses() {
     const skillSchema = game.system.model.Actor.explorer.skills;
     const result = {};
+    
+    // Инициализируем структуру из шаблона
     for (const entry in skillSchema) {
-      if (skillSchema.hasOwnProperty(entry)) {
-        const entryObject = skillSchema[entry];
-        if (entryObject.isSpecialist) {
-          result[entry] = {};
-          const specialities = skillSchema[entry].specialities;
-          for (const specialty in specialities) {
-            if (specialities.hasOwnProperty(specialty)) {
-              result[entry][specialty] = {
-                skillModifier: 0
-              };
+        if (skillSchema.hasOwnProperty(entry)) {
+            const entryObject = skillSchema[entry];
+            if (entryObject.isSpecialist) {
+                result[entry] = {};
+                const specialities = skillSchema[entry].specialities || {};
+                for (const specialty in specialities) {
+                    if (specialities.hasOwnProperty(specialty)) {
+                        result[entry][specialty] = {
+                            skillModifier: 0
+                        };
+                    }
+                }
+            } else {
+                result[entry] = {
+                    skillModifier: 0
+                };
             }
-          }
-        } else {
-          result[entry] = {
-            skillModifier: 0
-          };
         }
-      }
     }
+    
+    // ДОБАВЛЕНО: Добавляем кастомные специализации из данных актора
+    const actorSkills = this.system.skills || {};
+    for (const skillKey in actorSkills) {
+        const skill = actorSkills[skillKey];
+        
+        // Убедимся, что навык есть в result
+        if (!result[skillKey]) {
+            result[skillKey] = skill.isSpecialist ? {} : { skillModifier: 0 };
+        }
+        
+        // Добавляем кастомные специализации
+        if (skill.isSpecialist && skill.specialities) {
+            for (const specKey in skill.specialities) {
+                // Для кастомных специализаций создаем запись, если её нет
+                if (!result[skillKey][specKey]) {
+                    result[skillKey][specKey] = { skillModifier: 0 };
+                }
+            }
+        }
+    }
+    
+    // Применяем модификаторы из предметов
     const items = this.items;
     items.forEach((value, key) => {
-      const skillMods = value.skillModifiers;
-      if (skillMods !== null && skillMods !== undefined) {
-        for (const skillMod in skillMods) {
-          const split = skillMod.split(":");
-          if (split.length > 1)
-            result[split[0]][split[1]].skillModifier += skillMods[skillMod].skillModifier;
-          else
-            result[split[0]].skillModifier += skillMods[skillMod].skillModifier;
+        const skillMods = value.skillModifiers;
+        if (skillMods !== null && skillMods !== undefined) {
+            for (const skillMod in skillMods) {
+                const split = skillMod.split(":");
+                if (split.length > 1) {
+                    // Для специализаций (включая кастомные)
+                    if (result[split[0]] && result[split[0]][split[1]]) {
+                        result[split[0]][split[1]].skillModifier += skillMods[skillMod].skillModifier;
+                    }
+                } else {
+                    // Для обычных навыков
+                    if (result[split[0]]) {
+                        result[split[0]].skillModifier += skillMods[skillMod].skillModifier;
+                    }
+                }
+            }
         }
-      }
     });
-    console.log(result);
+    
     return result;
-  }
+}
 
   _computeItems() {
     let encumbrance = 0;

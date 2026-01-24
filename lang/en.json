@@ -184,6 +184,8 @@
   "DAMAGE_TYPE.RENDING_SHORT": "Р",
   "DAMAGE_TYPE.EXPLOSIVE_SHORT": "В",
 
+  "DIALOG.SPECIALITIES": "СПЕЦИАЛИЗАЦИИ",
+  "DIALOG.BASIC_SKILLS": "БАЗОВЫЕ НАВЫКИ",
   "DIALOG.CUSTOM_ROLL": "Особый Бросок",
 	"DIALOG.ROLL_WITH": "Бросок с",
 	"DIALOG.CLIP": "Патронов осталось",
@@ -328,6 +330,7 @@
   "RANGE.LONG": "Дальние",
   "RANGE.EXTREME": "Сверхдальние",
 
+  "SKILL.REP": "Репутация",
   "SKILL.ACROBATICS": "Акробатика",
   "SKILL.ROGUE-TRADERS_MATT": "Вольные Торговцы(Маттиас Беларчер)",
   "SKILL.DARKAELDARY": "Друкарский",

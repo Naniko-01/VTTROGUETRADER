@@ -98,6 +98,8 @@ export async function prepareConsumeResourcesRoll(rollData, actorRef) {
         }
       };
 
+      
+
       // Function to update visibility of conserve-wrapper based on selected resource
       const updateConserveWrapper = () => {
         const selectedOption = rollData.resources.find(resource => resource.id === selectedResource.value);
@@ -157,6 +159,7 @@ export async function prepareConsumeResourcesRoll(rollData, actorRef) {
   });
   dialog.render(true);
 }
+
 
 /**
  * Show a combat roll dialog.
@@ -736,11 +739,59 @@ export async function showAddCharacteristicModifierDialog(itemSheet, modifierTyp
   dialog.render(true);
 }
 
-export async function showAddSkillModifierDialog(itemSheet, modifierType){
+export async function showAddSkillModifierDialog(itemSheet, modifierType) {
+  const actor = itemSheet.actor;
+  const skillOptions = [];
+  const basicSkills = []; // Только базовые навыки (без специализаций)
+  const specialities = []; // Только специализации
+  let hasCustomSpecialities = false;
+  
+  for (const [skillKey, skill] of Object.entries(actor.system.skills || {})) {
+    // Локализуем основной навык для использования в качестве parentName
+    const parentName = game.i18n.localize(skill.label) || skill.label || skillKey;
+    
+    // Добавляем основной навык ТОЛЬКО если у него нет специализаций
+    if (!skill.isSpecialist) {
+      basicSkills.push({
+        value: skillKey,
+        label: skill.label, // Ключ локализации
+        type: 'skill'
+      });
+    }
+    
+    // Добавляем специализации, если они есть
+    if (skill.isSpecialist && skill.specialities) {
+      for (const [specKey, spec] of Object.entries(skill.specialities)) {
+        const isCustom = spec.isCustom || specKey.startsWith('custom_');
+        
+        if (isCustom) hasCustomSpecialities = true;
+        
+        const fullKey = `${skillKey}:${specKey}`;
+        
+        specialities.push({
+          value: fullKey,
+          label: spec.label || specKey, // Ключ локализации или кастомный текст
+          parentName: parentName, // Добавляем локализованное имя родителя
+          type: 'speciality',
+          isCustom: isCustom
+        });
+      }
+    }
+  }
+  
+  // Объединяем все опции для передачи в шаблон
+  const allSkillOptions = [...basicSkills, ...specialities];
+  
   const html = await renderTemplate("systems/rogue-trader/template/dialog/add-skill-modifier.html", {
-    modifierType: modifierType
+    modifierType: modifierType,
+    skillOptions: allSkillOptions,
+    basicSkills: basicSkills, // Отдельно передаем базовые навыки для проверки
+    hasSkills: allSkillOptions.length > 0,
+    hasBasicSkills: basicSkills.length > 0, // Новый флаг: есть ли базовые навыки
+    hasSpecialities: specialities.length > 0, // Новый флаг: есть ли специализации
+    hasCustomSpecialities: hasCustomSpecialities
   });
-
+  
   let dialog = new Dialog({
     title: game.i18n.localize("DIALOG.NEW_MODIFIER"),
     content: html,
@@ -751,16 +802,18 @@ export async function showAddSkillModifierDialog(itemSheet, modifierType){
         callback: html => {
           const attributeName = html.find("#attribute-name")[0].value.trim();
           const modifierValue = parseInt(html.find("#modifier-skill-value")[0].value, 10);
-          const optionElement = html.find(`option[id='modifier-option-${attributeName}']`);
-          console.log('foo');
-          console.log(optionElement);
-          const optionLabel = optionElement.data('option-label');
-          const modifierData = {
-            id: attributeName,
-            label: optionLabel,
-            skillModifier: modifierValue,
-          }
+          
           if (attributeName && !isNaN(modifierValue)) {
+            // Находим выбранную опцию
+            const selectedOption = html.find("#attribute-name option:selected");
+            const optionLabel = selectedOption.data('option-label') || attributeName;
+            
+            const modifierData = {
+              id: attributeName,
+              label: optionLabel, // Используем полное имя с родителем
+              skillModifier: modifierValue,
+            };
+            
             itemSheet.addModifier(modifierType, attributeName, modifierData);
           }
         }

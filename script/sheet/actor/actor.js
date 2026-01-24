@@ -22,6 +22,9 @@ export class RogueTraderSheet extends ActorSheet {
     // ===== ДОБАВЛЕНО: Обработчик для переключателя псикера/навигатора =====
     html.find('input[name="attr_psypowerswitch"]').change(ev => this._onPsypowerSwitch(ev));
     html.find('.roll-navigator').click(async ev => await this._prepareRollNavigator(ev));
+    html.find(".create-custom-speciality").click(ev => this._onCreateCustomSpeciality(ev));
+    html.find(".delete-custom-speciality").click(ev => this._onDeleteCustomSpeciality(ev));
+    html.find('input[name*=".specialities."]').on('blur', ev => this._onSpecialityNameChange(ev));
   }
 
   /** @override */
@@ -62,6 +65,7 @@ export class RogueTraderSheet extends ActorSheet {
     return buttons;
   }
 
+  
 async _prepareRollNavigator(event) {
     event.preventDefault();
     const div = $(event.currentTarget).parents('.item');
@@ -129,6 +133,83 @@ async _prepareRollNavigator(event) {
     // Либо перерисовываем весь лист, если нужно
     this.render();
   }
+
+// ДОБАВЛЕНО: Метод для создания кастомной специализации
+  async _onCreateCustomSpeciality(event) {
+    event.preventDefault();
+    const skillKey = $(event.currentTarget).data("skill");
+    
+    // Генерируем уникальный ключ
+    const specialityKey = `custom_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    
+    // Создаем новую специализацию
+    const updateData = {
+      [`system.skills.${skillKey}.specialities.${specialityKey}`]: {
+        label: name,
+        advance: -20,
+        cost: 0,
+        isCustom: true,
+        total: 0
+      }
+    };
+    
+    await this.actor.update(updateData);
+    this.render();
+  }
+
+  // ДОБАВЛЕНО: Метод для удаления кастомной специализации
+  async _onDeleteCustomSpeciality(event) {
+    event.preventDefault();
+    const skillKey = $(event.currentTarget).data("skill");
+    const specialityKey = $(event.currentTarget).data("speciality");
+    
+    // Подтверждение удаления
+    const confirmed = await new Promise((resolve) => {
+      new Dialog({
+        title: "Удалить специализацию?",
+        content: `<p>Вы уверены, что хотите удалить эту кастомную специализацию?</p>`,
+        buttons: {
+          yes: {
+            label: "Да",
+            callback: () => resolve(true)
+          },
+          no: {
+            label: "Нет",
+            callback: () => resolve(false)
+          }
+        }
+      }).render(true);
+    });
+    
+    if (!confirmed) return;
+    
+    // Удаляем специализацию
+    const updateData = {
+      [`system.skills.${skillKey}.specialities.-=${specialityKey}`]: null
+    };
+    
+    await this.actor.update(updateData);
+    this.render();
+  }
+
+  // ДОБАВЛЕНО: Метод для обработки изменения названия
+  _onSpecialityNameChange(event) {
+    const input = event.currentTarget;
+    const name = input.name;
+    const value = input.value;
+    
+    // Находим родительский элемент для проверки, является ли это кастомной специализацией
+    const row = $(input).closest('.speciality');
+    const isCustom = row.data('speciality-key')?.startsWith('custom_');
+    
+    if (isCustom && value.trim()) {
+      // Для кастомных специализаций сохраняем изменения
+      const updateData = {};
+      updateData[name] = value.trim();
+      this.actor.update(updateData);
+    }
+  }
+
 
   _onItemCreate(event) {
     event.preventDefault();
