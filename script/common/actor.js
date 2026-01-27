@@ -310,6 +310,9 @@ _computeSkills() {
         
         skill.advanceSkill = this._getAdvanceSkill(skill.advance);
         
+        // ДОБАВЛЕНО: Флаг для проверки, есть ли известные специализации
+        skill.hasKnownSpecialities = false;
+        
         if (skill.isSpecialist) {
             for (const specKey of Object.keys(skill.specialities || {})) {
                 const speciality = skill.specialities[specKey];
@@ -329,9 +332,14 @@ _computeSkills() {
                 // Показывать специализации если они хотя бы на уровне Base (-10) или выше
                 speciality.isKnown = speciality.advance >= -10;
                 
+                // ДОБАВЛЕНО: Обновляем флаг, если найдена хотя бы одна известная специализация
+                if (speciality.isKnown) {
+                    skill.hasKnownSpecialities = true;
+                }
+                
                 speciality.advanceSpec = this._getAdvanceSkill(speciality.advance);
                 
-                // ДОБАВЛЕНО: Убедимся, что isCustom установлен для кастомных специализаций
+                // Убедимся, что isCustom установлен для кастомных специализаций
                 if (specKey.startsWith('custom_') && speciality.isCustom === undefined) {
                     speciality.isCustom = true;
                 }

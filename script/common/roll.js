@@ -339,20 +339,20 @@ async function _computeDamage(damageFormula, penetration, rollData) {
     damageRender: await r.render()
   };
 
-  if (weaponTraits?.accurate && isAiming) {
+if (weaponTraits?.accurate && isAiming && rollData.attackType?.name === "standard" && rollData.weaponClass === "basic") {
     let numDice = ~~((dos - 1) / 2); //-1 because each degree after the first counts
     if (numDice >= 1) {
-      if (numDice > 2) numDice = 2;
-      let ar = new Roll(`${numDice}d10`);
-      ar.evaluate({ async: false });
-      damage.total += ar.total;
-      ar.terms.flatMap(term => term.results).forEach(async die => {
-        if (die.active && die.result < dos) damage.dices.push(die.result);
-        if (die.active && (typeof damage.minDice === "undefined" || die.result < damage.minDice)) damage.minDice = die.result;
-      });
-      damage.accurateRender = await ar.render();
+        if (numDice > 2) numDice = 2;
+        let ar = new Roll(`${numDice}d10`);
+        ar.evaluate({ async: false });
+        damage.total += ar.total;
+        ar.terms.flatMap(term => term.results).forEach(async die => {
+            if (die.active && die.result < dos) damage.dices.push(die.result);
+            if (die.active && (typeof damage.minDice === "undefined" || die.result < damage.minDice)) damage.minDice = die.result;
+        });
+        damage.accurateRender = await ar.render();
     }
-  }
+}
 
   // Without a To Hit we a roll to associate the chat message with
   if (weaponTraits?.skipAttackRoll) {

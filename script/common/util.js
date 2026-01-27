@@ -96,6 +96,7 @@ export default class RogueTraderUtil {
     rollData.baseTarget= characteristic.total + weapon.attack,
     rollData.unnatural = characteristic.unnatural;
     rollData.modifier= 0,
+    rollData.weaponClass = weapon.system.class;
     rollData.isMelee= isMelee;
     rollData.isRange= !isMelee;
     rollData.clip= weapon.clip;

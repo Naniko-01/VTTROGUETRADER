@@ -2140,6 +2140,37 @@ li.folder.collapsed > .folder-header {
   margin-left: 1px;
   margin-top: 2px;
 }
+/* Стили для заголовка специализаций */
+.rogue-trader .progression .skills .specialist-header {
+    justify-content: space-between;
+    align-items: center;
+    padding-right: 4px; /* Чтобы соответствовать отступам других заголовков */
+}
+
+/* Кнопка создания кастомной специализации */
+.rogue-trader .progression .skills .specialist-header .create-custom-speciality {
+    flex: 0 0 auto;
+    margin: 0;
+    padding: 0;
+    margin-right: 8px;
+    background: transparent;
+    border: none;
+    color: var(--color-title);
+    font-size: 10px;
+    line-height: 14px;
+}
+
+/* Имя навыка в заголовке специализации */
+.rogue-trader .progression .skills .specialist-header .name {
+    flex-grow: 1;
+    text-align: left;
+    padding-left: 4px;
+}
+
+/* Чтобы кнопка выглядела так же, как другие кнопки добавления */
+.rogue-trader .progression .skills .specialist-header .create-custom-speciality i {
+    font-size: 10px;
+}
 .rogue-trader .progression .skills .item-list .header {
   margin-top: 5px;
 }

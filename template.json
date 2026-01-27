@@ -830,11 +830,6 @@
               "label": "SKILL.UNDERDECK",
               "advance": -20,
               "cost": 0
-            },
-            "rogueTraderMaTT": {
-              "label": "SKILL.ROGUE-TRADERS_MATT",
-              "advance": -20,
-              "cost": 0
             }
           }
           },
