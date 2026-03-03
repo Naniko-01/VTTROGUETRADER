@@ -6,7 +6,9 @@
                 <label>{{localize "DIALOG.ROLL_WITH"}}</label>
                 <select name="characteristic">
                     {{#each characteristics}}
-                        <option value="{{target}}"{{#if selected}} selected{{/if}}>{{localize label}}</option>
+                        <option value="{{key}}" data-target="{{target}}" {{#if selected}} selected{{/if}}>
+                            {{localize label}}
+                        </option>
                     {{/each}}
                 </select>
             </div>

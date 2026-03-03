@@ -7,8 +7,8 @@ export class NpcSheet extends RogueTraderSheet {
 		return mergeObject(super.defaultOptions, {
 			classes: ["rogue-trader", "sheet", "actor"],
 			template: "systems/rogue-trader/template/sheet/actor/npc.html",
-			width: 720,
-			height: 881,
+      		width: 1150,
+     		height: 870,
 			resizable: true,
 			tabs: [
 				{

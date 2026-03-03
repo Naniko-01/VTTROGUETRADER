@@ -19,7 +19,20 @@ export async function prepareCommonRoll(rollData) {
           rollData.rolledWith = html.find("[name=characteristic] :selected").text();
           rollData.modifier = html.find("#modifier")[0].value;
           rollData.isCombatTest = false;
-          rollData.unnatural = rollData.characteristics?.find((char) => char.selected).unnatural ?? 0;
+
+          // Получаем выбранный ключ характеристики
+          const selectedKey = html.find("[name=characteristic]").val();
+          if (selectedKey) {
+            const actor = game.actors.get(rollData.ownerId);
+            if (actor && typeof actor.getCharacteristicMultiplier === 'function') {
+              rollData.unnatural = actor.getCharacteristicMultiplier(selectedKey);
+            } else {
+              rollData.unnatural = 0;
+            }
+          } else {
+            rollData.unnatural = 0;
+          }
+
           await commonRoll(rollData);
         }
       },
@@ -28,23 +41,22 @@ export async function prepareCommonRoll(rollData) {
         label: game.i18n.localize("BUTTON.CANCEL"),
         callback: () => {}
       }
-
     },
     default: "roll",
     close: () => {},
     render: html => {
-      const sel = html.find("select[name=characteristic");
+      const sel = html.find("select[name=characteristic]");
       const target = html.find("#target");
       sel.change(ev => {
-        target.val(sel.val());
+        const selected = sel.find('option:selected');
+        target.val(selected.data('target'));
       });
     }
   }, {
-    width: 200
+    width: 220
   });
   dialog.render(true);
 }
-
 export async function prepareConsumeResourcesRoll(rollData, actorRef) {
   const html = await renderTemplate("systems/rogue-trader/template/dialog/colony-resource-burn.html", rollData);
   let dialog = new Dialog({
@@ -97,6 +109,8 @@ export async function prepareConsumeResourcesRoll(rollData, actorRef) {
           rollFormula.value = rollData.consumedAmount;
         }
       };
+
+      
 
       // Function to update visibility of conserve-wrapper based on selected resource
       const updateConserveWrapper = () => {
@@ -158,6 +172,7 @@ export async function prepareConsumeResourcesRoll(rollData, actorRef) {
   dialog.render(true);
 }
 
+
 /**
  * Show a combat roll dialog.
  * @param {object} rollData
@@ -187,6 +202,10 @@ export async function prepareCombatRoll(rollData, actorRef) {
                       text : attackType?.options[attackType.selectedIndex].text,
                       modifier : 0
                     };
+                    
+                    // Вычисляем hitMargin и maxAdditionalHit на основе типа атаки
+                    _computeRateOfFireForDialog(rollData);
+                    
                     const aim = html.find("#aim")[0]
                     rollData.aim = {
                       val : aim?.value,
@@ -197,9 +216,54 @@ export async function prepareCombatRoll(rollData, actorRef) {
                     rollData.damageType = html.find("#damageType")[0].value;
                     rollData.damageBonus = parseInt(html.find("#damageBonus")[0].value, 10);
                     rollData.penetrationFormula = html.find("#penetration")[0].value;
+                    const movedCheckbox = html.find("#moved")[0];
+                    rollData.moved = movedCheckbox ? movedCheckbox.checked : false;
                     rollData.isCombatTest = true;
+                                        // Обработка множественных атак (swift/lightning)
+                    if (rollData.attackType.name === "swift" || rollData.attackType.name === "lightning") {
+                        const numAttacks = rollData.attackType.name === "swift" ? 2 : 3;
+                        // Списание патронов для множественной атаки
+                        if (rollData.isRange && rollData.clip.max > 0) {
+                            const ammoUseMultiplier = rollData.weaponTraits?.storm ? 2 : 1;
+                            const weapon = game.actors.get(rollData.ownerId)?.items?.get(rollData.itemId);
+                            if (rollData.clip.value < numAttacks * ammoUseMultiplier) {
+                                return reportEmptyClip(rollData);
+                            } else {
+                                rollData.clip.value -= numAttacks * ammoUseMultiplier;
+                                await weapon.update({"system.clip.value": rollData.clip.value});
+                            }
+                        }
+                        // Выполняем отдельные броски стандартной атаки
+                        for (let i = 0; i < numAttacks; i++) {
+                            // Создаём копию данных для этой атаки
+                            const attackData = {
+                                ...rollData, // поверхностное копирование
+                                attackType: { 
+                                    name: "standard", 
+                                    text: game.i18n.localize("ATTACK_TYPE.STANDARD"),
+                                    modifier: 0,
+                                    hitMargin: 0
+                                },
+                                skipAmmoCheck: true,
+                                isMultiplePart: true,
+                                partIndex: i,
+                                totalParts: numAttacks,
+                            };
+                            // Удаляем поля, которые могут быть специфичны для предыдущего броска
+                            delete attackData.result;
+                            delete attackData.isSuccess;
+                            delete attackData.dos;
+                            delete attackData.dof;
+                            delete attackData.damages;
+                            delete attackData.rollObject;
+                            // Вызываем обычный combatRoll
+                            await combatRoll(attackData);
+                        }
+                        return; // Завершаем обработку, чтобы не вызывать combatRoll ещё раз
+                    }
+                    // Проверка патронов
                     if (rollData.isRange && rollData.clip.max > 0) {
-                        const ammoUseMultiplier = rollData.weaponTraits.storm ? 2 : 1;
+                        const ammoUseMultiplier = rollData.weaponTraits?.storm ? 2 : 1;
                         const weapon = game.actors.get(rollData.ownerId)?.items?.get(rollData.itemId);
                         if(weapon) {
                           switch(rollData.attackType.name) {
@@ -258,6 +322,84 @@ export async function prepareCombatRoll(rollData, actorRef) {
     dialog.render(true);
 }
 
+/**
+ * Вычисляет hitMargin и maxAdditionalHit для диалога
+ */
+function _computeRateOfFireForDialog(rollData) {
+  rollData.maxAdditionalHit = 0;
+
+  switch (rollData.attackType.name) {
+    case "standard":
+      rollData.attackType.modifier = 10;
+      rollData.attackType.hitMargin = 0;
+      break;
+    case "bolt":
+    case "blast":
+      rollData.attackType.modifier = 0;
+      rollData.attackType.hitMargin = 0;
+      break;
+
+    case "semi_auto":
+      rollData.attackType.modifier = 0;
+      rollData.attackType.hitMargin = 2;
+      rollData.maxAdditionalHit = rollData.rateOfFire?.burst - 1 || 0;
+      break;
+
+    case "swift":
+    case "barrage":
+    rollData.attackType.modifier = 0;
+    rollData.attackType.hitMargin = 0; // было 2
+    rollData.maxAdditionalHit = 0;
+    break;
+
+    case "full_auto":
+      rollData.attackType.modifier = -10;
+      rollData.attackType.hitMargin = 1;
+      rollData.maxAdditionalHit = rollData.rateOfFire?.full - 1 || 0;
+      break;
+
+ case "lightning":
+    rollData.attackType.modifier = 0; // было -10
+    rollData.attackType.hitMargin = 0; // было 1
+    rollData.maxAdditionalHit = 0;
+    break;
+
+    case "storm":
+      rollData.attackType.modifier = 0;
+      rollData.attackType.hitMargin = 1;
+      rollData.maxAdditionalHit = rollData.rateOfFire?.full - 1 || 0;
+      break;
+
+    case "called_shot":
+      rollData.attackType.modifier = -20;
+      rollData.attackType.hitMargin = 0;
+      break;
+
+    case "charge":
+      rollData.attackType.modifier = 20;
+      rollData.attackType.hitMargin = 0;
+      break;
+
+    case "allOut":
+      rollData.attackType.modifier = 30;
+      rollData.attackType.hitMargin = 0;
+      break;
+    
+    case "Macrobattery":
+      rollData.attackType.hitMargin = rollData.dosPerHit ?? 1;
+      rollData.maxAdditionalHit = rollData.weaponStrength - 1;
+      break;
+    case "Lance":
+      rollData.attackType.hitMargin = rollData.dosPerHit ?? 3;
+      rollData.maxAdditionalHit = rollData.weaponStrength - 1;
+      break;
+
+    default:
+      rollData.attackType.modifier = 0;
+      rollData.attackType.hitMargin = 0;
+      break;
+  }
+}
 /**
  * Show a force field roll dialog.
  * @param {object} rollData
@@ -355,6 +497,52 @@ export async function prepareShipCombatRoll(rollData, actorRef) {
  * @param {object} rollData
  */
 export async function preparePsychicPowerRoll(rollData) {
+  // Получаем актора и предмет
+  const actor = game.actors.get(rollData.ownerId);
+  const item = actor.items.get(rollData.itemId);
+
+  // Получаем выбранный тип теста из предмета
+  const focusTest = item.system.focuspowertest;
+
+  let baseTarget = 0;
+  let testName = "";
+
+  switch (focusTest) {
+    case "willpower":
+      baseTarget = actor.system.characteristics.willpower.total;
+      testName = game.i18n.localize("CHARACTERISTIC.WILLPOWER");
+      break;
+    case "psyniscience":
+      // Псайникия — специализация навыка advPer
+      if (actor.system.skills?.advPer?.specialities?.psyniscience) {
+        baseTarget = actor.system.skills.advPer.specialities.psyniscience.total;
+      } else {
+        // Если навыка нет, используем половину Perception
+        baseTarget = Math.floor(actor.system.characteristics.perception.total / 2);
+      }
+      testName = game.i18n.localize("SKILL.PSYNISCIENCE");
+      break;
+    case "awarness":
+      if (actor.system.skills?.awareness) {
+        baseTarget = actor.system.skills.awareness.total;
+      } else {
+        baseTarget = Math.floor(actor.system.characteristics.perception.total / 2);
+      }
+      testName = game.i18n.localize("SKILL.AWARENESS");
+      break;
+    case "corruption":
+      baseTarget = actor.system.corruption;
+      testName = game.i18n.localize("CORRUPTION.HEADER");
+      break;
+    default:
+      baseTarget = actor.system.characteristics.willpower.total;
+      testName = game.i18n.localize("CHARACTERISTIC.WILLPOWER");
+  }
+
+  // Передаём baseTarget в rollData
+  rollData.baseTarget = baseTarget;
+  rollData.testName = testName;
+
   const html = await renderTemplate("systems/rogue-trader/template/dialog/psychic-power-roll.html", rollData);
   console.log(rollData);
   let dialog = new Dialog({
@@ -370,7 +558,7 @@ export async function preparePsychicPowerRoll(rollData) {
           rollData.modifier = html.find("#modifier")[0].value;
           rollData.psy.psyStrength = html.find("#psyStrength")[0].value;
           rollData.psy.push = parseInt(html.find("#pushValue")[0]?.value, 10);
-          rollData.psy.disciplineMastery = html.find("#disciplineMastery")[0].value;
+          rollData.psy.disciplineMastery = html.find("#disciplineMastery")[0].checked;
           rollData.psy.value = getRollPsyRating(rollData);
           rollData.psy.warpConduit = html.find("#warpConduit")[0].checked;
           rollData.damageFormula = html.find("#damageFormula")[0].value;
@@ -383,6 +571,9 @@ export async function preparePsychicPowerRoll(rollData) {
           rollData.attackType.text = attackType.options[attackType.selectedIndex].text;
           rollData.psy.useModifier = true;
           rollData.isCombatTest = true;
+          
+          // Для пси-сил сразу бросаем урон, как в старой версии
+          rollData.skipSeparateDamage = false; // Это заставит бросать урон сразу
           await combatRoll(rollData);
         }
       },
@@ -405,9 +596,37 @@ export async function preparePsychicPowerRoll(rollData) {
  */
 
 export async function prepareNavigatorRoll(rollData) {
+  // Проверяем, выбран ли nan тест
+  if (rollData.navigatorTest === 'nan') {
+    // Автоматический успех, отправляем сообщение без диалога
+    await _sendNavigatorAutoSuccessToChat(rollData);
+    return;
+  }
+  
   // Получаем актора и предмет навигатора
   const actor = game.actors.get(rollData.ownerId);
   const item = actor.items.get(rollData.itemId);
+  
+  // Определяем базовую цель на основе выбранного теста
+  let baseTarget = 0;
+  let testName = '';
+  
+  switch (rollData.navigatorTest) {
+    case 'willpower':
+      baseTarget = actor.system.characteristics.willpower.total;
+      testName = game.i18n.localize("TITLE.NAVI_WP");
+      break;
+    case 'perception':
+      baseTarget = actor.system.characteristics.perception.total;
+      testName = game.i18n.localize("TITLE.NAVI_PER");
+      break;
+    default:
+      baseTarget = actor.system.characteristics.willpower.total;
+      testName = game.i18n.localize("TITLE.NAVI_WP");
+  }
+  
+  // Добавляем difficulty к модификатору
+  const difficulty = rollData.navigatorDifficulty || 0;
   
   // Извлекаем HTML содержимое из редакторов
   let descriptionNovice = "";
@@ -441,16 +660,18 @@ export async function prepareNavigatorRoll(rollData) {
     master: game.i18n.localize("TITLE.MASTER")
   }[skillLevel] || skillLevel;
   
-  // Рассчитываем итоговую цель с учетом скрытого бонуса
-  const baseTarget = rollData.baseTarget || 0;
+  // Рассчитываем итоговую цель
   const initialModifier = rollData.modifier || 0;
-  const finalTarget = baseTarget + skillLevelModifier + initialModifier;
+  const totalModifier = initialModifier + difficulty; // Добавляем difficulty к модификатору
+  const finalTarget = baseTarget + skillLevelModifier + totalModifier;
   
   const html = await renderTemplate("systems/rogue-trader/template/dialog/navigator-roll.html", {
     ...rollData,
+    baseTarget: baseTarget,
+    testName: testName,
     skillLevelDisplay: skillLevelDisplay,
     skillLevelModifier: skillLevelModifier,
-    baseTarget: baseTarget,
+    difficulty: difficulty, // Передаем difficulty отдельно
     modifier: initialModifier, // Только ручной модификатор
     finalTarget: finalTarget,
     descriptionNovice: descriptionNovice,
@@ -474,6 +695,7 @@ export async function prepareNavigatorRoll(rollData) {
           // Получаем значения из формы
           const finalTargetValue = parseInt(html.find('#finalTarget').val(), 10);
           const manualModifier = parseInt(html.find('#modifier').val(), 10);
+          const difficultyValue = parseInt(html.find('#difficulty').val(), 10);
           const skillLevelModifierValue = parseInt(html.find('#skillLevelModifier').val(), 10);
           const baseTargetValue = parseInt(html.find('#target').val(), 10);
           const selectedSkillLevel = html.find('select[name="system.сhat.skillLevel"]').val();
@@ -501,7 +723,7 @@ export async function prepareNavigatorRoll(rollData) {
           const finalRollData = {
             name: rollData.name,
             baseTarget: baseTargetValue,
-            modifier: manualModifier,
+            modifier: manualModifier + difficultyValue, // Добавляем difficulty к модификатору
             ownerId: rollData.ownerId,
             itemId: rollData.itemId,
             isCombatTest: false,
@@ -516,6 +738,8 @@ export async function prepareNavigatorRoll(rollData) {
             descriptionMaster: descriptionMasterValue,
             navigatorDescription: navigatorDescription,
             isNavigatorRoll: true,
+            navigatorTest: rollData.navigatorTest,
+            navigatorDifficulty: difficultyValue,
             
             // Расчетная итоговая цель
             calculatedTarget: finalTargetValue
@@ -536,6 +760,7 @@ export async function prepareNavigatorRoll(rollData) {
       // Получаем элементы DOM
       const baseTargetInput = html.find('#target');
       const skillLevelModifierInput = html.find('#skillLevelModifier');
+      const difficultyInput = html.find('#difficulty');
       const modifierInput = html.find('#modifier');
       const finalTargetInput = html.find('#finalTarget');
       
@@ -543,10 +768,11 @@ export async function prepareNavigatorRoll(rollData) {
       const calculateFinalTarget = () => {
         const baseTarget = parseInt(baseTargetInput.val()) || 0;
         const skillLevelModifier = parseInt(skillLevelModifierInput.val()) || 0;
+        const difficulty = parseInt(difficultyInput.val()) || 0;
         const modifier = parseInt(modifierInput.val()) || 0;
         
-        // Итоговая цель = базовая цель + скрытый бонус + модификатор
-        const finalTarget = baseTarget + skillLevelModifier + modifier;
+        // Итоговая цель = базовая цель + скрытый бонус + difficulty + модификатор
+        const finalTarget = baseTarget + skillLevelModifier + difficulty + modifier;
         finalTargetInput.val(finalTarget);
       };
       
@@ -559,6 +785,79 @@ export async function prepareNavigatorRoll(rollData) {
   }, { width: 210 });
   
   dialog.render(true);
+}
+
+/**
+ * Отправка сообщения об автоматическом успехе для nan теста
+ */
+async function _sendNavigatorAutoSuccessToChat(rollData) {
+  // Получаем актора и предмет
+  const actor = game.actors.get(rollData.ownerId);
+  const item = actor.items.get(rollData.itemId);
+  
+  // Определяем описание в зависимости от уровня навыка
+  let description = "";
+  const skillLevel = rollData.skillLevel || "novice";
+  
+  switch(skillLevel) {
+    case 'novice':
+      description = item.system.descriptionNovice ? 
+        await TextEditor.enrichHTML(item.system.descriptionNovice, {async: true}) : "";
+      break;
+    case 'adept':
+      description = item.system.descriptionAdept ? 
+        await TextEditor.enrichHTML(item.system.descriptionAdept, {async: true}) : "";
+      break;
+    case 'master':
+      description = item.system.descriptionMaster ? 
+        await TextEditor.enrichHTML(item.system.descriptionMaster, {async: true}) : "";
+      break;
+  }
+  
+  const skillLevelDisplay = {
+    novice: game.i18n.localize("TITLE.NOVICE"),
+    adept: game.i18n.localize("TITLE.ADEPT"),
+    master: game.i18n.localize("TITLE.MASTER")
+  }[skillLevel] || skillLevel;
+  
+  const navigatorTestDisplay = game.i18n.localize("TITLE.NAVI_NAN");
+  
+  let speaker = ChatMessage.getSpeaker();
+  let chatData = {
+    user: game.user.id,
+    type: CONST.CHAT_MESSAGE_TYPES.OTHER,
+    rollMode: game.settings.get("core", "rollMode"),
+    speaker: speaker,
+    flags: {
+      "rogue-trader.rollData": {
+        isNavigatorAutoSuccess: true,
+        name: rollData.name,
+        skillLevelDisplay: skillLevelDisplay,
+        navigatorTest: navigatorTestDisplay,
+        navigatorDescription: description
+      }
+    }
+  };
+  
+  // Рендерим HTML через шаблон
+  const html = await renderTemplate("systems/rogue-trader/template/chat/roll.html", {
+    name: rollData.name,
+    isNavigatorAutoSuccess: true,
+    skillLevelDisplay: skillLevelDisplay,
+    navigatorDescription: description,
+    ownerId: rollData.ownerId,
+    itemId: rollData.itemId
+  });
+  
+  chatData.content = html;
+  
+  if (["gmroll", "blindroll"].includes(chatData.rollMode)) {
+    chatData.whisper = ChatMessage.getWhisperRecipients("GM");
+  } else if (chatData.rollMode === "selfroll") {
+    chatData.whisper = [game.user];
+  }
+  
+  ChatMessage.create(chatData);
 }
 
 export async function navigatorCommonRoll(rollData) {
@@ -736,11 +1035,59 @@ export async function showAddCharacteristicModifierDialog(itemSheet, modifierTyp
   dialog.render(true);
 }
 
-export async function showAddSkillModifierDialog(itemSheet, modifierType){
+export async function showAddSkillModifierDialog(itemSheet, modifierType) {
+  const actor = itemSheet.actor;
+  const skillOptions = [];
+  const basicSkills = []; // Только базовые навыки (без специализаций)
+  const specialities = []; // Только специализации
+  let hasCustomSpecialities = false;
+  
+  for (const [skillKey, skill] of Object.entries(actor.system.skills || {})) {
+    // Локализуем основной навык для использования в качестве parentName
+    const parentName = game.i18n.localize(skill.label) || skill.label || skillKey;
+    
+    // Добавляем основной навык ТОЛЬКО если у него нет специализаций
+    if (!skill.isSpecialist) {
+      basicSkills.push({
+        value: skillKey,
+        label: skill.label, // Ключ локализации
+        type: 'skill'
+      });
+    }
+    
+    // Добавляем специализации, если они есть
+    if (skill.isSpecialist && skill.specialities) {
+      for (const [specKey, spec] of Object.entries(skill.specialities)) {
+        const isCustom = spec.isCustom || specKey.startsWith('custom_');
+        
+        if (isCustom) hasCustomSpecialities = true;
+        
+        const fullKey = `${skillKey}:${specKey}`;
+        
+        specialities.push({
+          value: fullKey,
+          label: spec.label || specKey, // Ключ локализации или кастомный текст
+          parentName: parentName, // Добавляем локализованное имя родителя
+          type: 'speciality',
+          isCustom: isCustom
+        });
+      }
+    }
+  }
+  
+  // Объединяем все опции для передачи в шаблон
+  const allSkillOptions = [...basicSkills, ...specialities];
+  
   const html = await renderTemplate("systems/rogue-trader/template/dialog/add-skill-modifier.html", {
-    modifierType: modifierType
+    modifierType: modifierType,
+    skillOptions: allSkillOptions,
+    basicSkills: basicSkills, // Отдельно передаем базовые навыки для проверки
+    hasSkills: allSkillOptions.length > 0,
+    hasBasicSkills: basicSkills.length > 0, // Новый флаг: есть ли базовые навыки
+    hasSpecialities: specialities.length > 0, // Новый флаг: есть ли специализации
+    hasCustomSpecialities: hasCustomSpecialities
   });
-
+  
   let dialog = new Dialog({
     title: game.i18n.localize("DIALOG.NEW_MODIFIER"),
     content: html,
@@ -751,16 +1098,18 @@ export async function showAddSkillModifierDialog(itemSheet, modifierType){
         callback: html => {
           const attributeName = html.find("#attribute-name")[0].value.trim();
           const modifierValue = parseInt(html.find("#modifier-skill-value")[0].value, 10);
-          const optionElement = html.find(`option[id='modifier-option-${attributeName}']`);
-          console.log('foo');
-          console.log(optionElement);
-          const optionLabel = optionElement.data('option-label');
-          const modifierData = {
-            id: attributeName,
-            label: optionLabel,
-            skillModifier: modifierValue,
-          }
+          
           if (attributeName && !isNaN(modifierValue)) {
+            // Находим выбранную опцию
+            const selectedOption = html.find("#attribute-name option:selected");
+            const optionLabel = selectedOption.data('option-label') || attributeName;
+            
+            const modifierData = {
+              id: attributeName,
+              label: optionLabel, // Используем полное имя с родителем
+              skillModifier: modifierValue,
+            };
+            
             itemSheet.addModifier(modifierType, attributeName, modifierData);
           }
         }

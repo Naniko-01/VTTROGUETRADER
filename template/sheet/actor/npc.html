@@ -54,6 +54,7 @@
 
         <div class="sheet-tabs tabs flex row" data-group="primary">
             <b class="item" data-tab="stats">{{localize "TAB.STATS"}}</b>
+            <b class="item" data-tab="reputation">{{localize "TAB.REP"}}</b>
             <b class="item" data-tab="combat">{{localize "TAB.COMBAT"}}</b>
             <b class="item" data-tab="abilities">{{localize "TAB.ABILITIES"}}</b>
             <b class="item" data-tab="psychic-powers">{{localize "TAB.PSYCHIC_POWERS"}}</b>
@@ -65,6 +66,9 @@
         <div class="sheet-body">
             <div class="tab" data-group="primary" data-tab="stats">
                 {{> systems/rogue-trader/template/sheet/actor/tab/npc-stats.html}}
+            </div>
+                        <div class="tab" data-group="primary" data-tab="reputation">
+             {{> systems/rogue-trader/template/sheet/actor/tab/reputation.html}}
             </div>
             <div class="tab" data-group="primary" data-tab="combat">
                 {{> systems/rogue-trader/template/sheet/actor/tab/combat.html}}

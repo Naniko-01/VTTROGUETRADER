@@ -150,6 +150,54 @@
     line-height: 1.4;
     color: var(--color-text-dark);
 }
+.rogue-trader .navigator-difficulty {
+    width: 2em !important;
+    text-align: center;
+    margin: 0 2px;
+}
+/* Стили для навигатора - выравнивание header-row */
+.rogue-trader.navigator .header-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+    width: 100%;
+}
+
+.rogue-trader.navigator .header-row label {
+    flex: 0 0 140px;
+    text-align: right;
+    margin-right: 10px;
+    font-weight: bold;
+    white-space: nowrap;
+}
+
+.rogue-trader.navigator .header-row input,
+.rogue-trader.navigator .header-row select {
+    flex: 1;
+    min-width: 0;
+    margin-left: 5px;
+}
+
+/* Для поля difficulty в навигаторе - совпадает с psychic-power */
+.rogue-trader.navigator .header-row input.navigator-difficulty {
+    width: 2em !important;
+    flex: 0 0 auto;
+    text-align: center;
+    margin: 0 2px;
+}
+
+/* Выравнивание для строки с difficulty и select */
+.rogue-trader.navigator .header-row .difficulty-row {
+    display: flex;
+    align-items: center;
+    flex: 1;
+}
+
+.rogue-trader.navigator .header-row .difficulty-row select {
+    flex: 1;
+    margin-left: 5px;
+}
 
 .rogue-trader .space10 {
   margin-bottom: 10px;
@@ -533,6 +581,286 @@ li.folder.collapsed > .folder-header {
 .rogue-trader.dialog .wrapper .rangeBox {
   width: 30px;
 }
+
+/* ==================== КАСТОМНЫЕ СЧЕТЧИКИ (ИСПРАВЛЕННЫЙ ВИЗУАЛ) ==================== */
+
+/* Основной контейнер счетчиков */
+.custom-counters {
+    width: 100%;
+    margin-bottom: 5px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    flex: 1; /* Занимает все доступное пространство */
+    min-height: 0; /* Важно для flex контейнеров */
+}
+
+/* Заголовок блока счетчиков - ВЫРАВНИВАЕМ КАК В INSANITIES */
+.custom-counters .header {
+    width: 100%;
+    height: 22px;
+    border: 0 none;
+    border-radius: 3px;
+    font-family: var(--font-text);
+    font-size: 16px;
+    line-height: 14px;
+    margin: 5px 0 0 0; /* Отступ сверху как в insanities */
+    padding: 4px 4px;
+    text-align: center;
+    background: #5d2f149e;
+    color: var(--color-title);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-shrink: 0;
+}
+
+/* Имя в заголовке - как в insanities */
+.custom-counters .header .name {
+    flex-basis: 85%;
+    text-align: center;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Кнопка добавления - СТИЛИ КАК В ITEM-CREATE */
+.custom-counters .header .button.custom-counter-create {
+    flex-basis: 15%;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: none;
+    color: var(--color-title);
+    font-size: 10px;
+    height: 100%;
+    padding: 0;
+    margin: 0;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+/* Иконка плюса - как в insanities */
+.custom-counters .header .button.custom-counter-create i {
+    font-size: 10px;
+    line-height: 1;
+}
+
+/* Контейнер для содержимого счетчиков */
+.custom-counters-content {
+    padding: 3px 0;
+    flex: 1; /* Занимает оставшееся пространство */
+    overflow-y: auto;
+    overflow-x: hidden;
+    min-height: 0; /* Важно для flex */
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    background: rgba(0, 0, 0, 0.05);
+    border-radius: 3px;
+}
+
+/* Счетчик - более компактный дизайн */
+.custom-counter-item {
+    width: 100% !important;
+    min-width: 100% !important;
+    max-width: 100% !important;
+    padding: 3px 5px !important; /* Уменьшенные отступы */
+    border-radius: 3px; /* Меньший радиус */
+    border: 1px solid rgba(0, 0, 0, 0.3);
+    box-sizing: border-box;
+    flex: 0 0 auto;
+    background: linear-gradient(135deg, #5d2f149e 0%, #7a1404 100%);
+    height: 62px !important; /* Уменьшенная высота */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: all 0.2s ease;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+    margin: 0 !important;
+}
+
+.custom-counter-item:hover {
+    border-color: rgba(255, 255, 255, 0.4);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+}
+
+/* Верхняя строка: название и кнопка удаления */
+.custom-counter-item .flex.row.justify-space-between.align-center {
+    margin-bottom: 1px !important; /* Уменьшен отступ */
+    min-height: 14px !important; /* Уменьшена высота */
+    width: 100%;
+}
+
+/* Поле названия счетчика - меньший шрифт */
+.custom-counter-item .counter-name {
+    background: transparent;
+    border: none;
+    color: white;
+    font-weight: bold;
+    font-size: 12px !important; /* Уменьшен шрифт */
+    padding: 1px 3px !important; /* Уменьшенные отступы */
+    line-height: 1.1;
+    width: calc(100% - 18px) !important;
+    height: 14px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.custom-counter-item .counter-name:focus {
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 2px;
+    outline: none;
+    box-shadow: inset 0 0 2px rgba(0, 0, 0, 0.5);
+}
+
+/* Кнопка удаления счетчика */
+.custom-counter-delete {
+    cursor: pointer;
+    opacity: 0.7;
+    transition: opacity 0.2s ease;
+    flex-shrink: 0;
+    width: 14px;
+    height: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.custom-counter-delete:hover {
+    opacity: 1;
+    transform: scale(1.1);
+}
+
+.custom-counter-delete i {
+    color: white;
+    font-size: 8px !important; /* Уменьшен размер иконки */
+}
+
+/* Средняя строка: числовые значения */
+.custom-counter-item .flex.row.align-center.justify-center {
+    gap: 3px !important; /* Уменьшен промежуток */
+    margin-bottom: 0 !important; /* Убраны отступы */
+    min-height: 22px; /* Уменьшена высота */
+    width: 100%;
+    justify-content: center;
+}
+
+/* Поля ввода чисел - более компактные */
+.custom-counter-item input[type="number"] {
+    width: 42px !important; /* Уменьшена ширина */
+    height: 20px !important; /* Уменьшена высота */
+    text-align: center;
+    background: rgba(255, 255, 255, 0.15);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 2px;
+    font-size: 11px !important; /* Уменьшен шрифт */
+    font-weight: bold;
+    padding: 0 2px;
+}
+
+.custom-counter-item input[type="number"]:focus {
+    background: rgba(255, 255, 255, 0.25);
+    border-color: rgba(255, 255, 255, 0.6);
+    box-shadow: 0 0 3px rgba(255, 255, 255, 0.4);
+}
+
+/* Разделитель между current и max */
+.custom-counter-item .flex.row.align-center.justify-center span {
+    color: white;
+    font-weight: bold;
+    font-size: 10px; /* Уменьшен шрифт */
+    margin: 0 1px; /* Уменьшен отступ */
+}
+
+/* Нижняя строка: настройки */
+.custom-counter-item .flex.row.align-center.justify-space-between {
+    margin-top: 0 !important; /* Убран отступ */
+    min-height: 14px; /* Уменьшена высота */
+    width: 100%;
+    padding: 0 1px; /* Уменьшенные отступы */
+}
+
+/* Чекбокс показа максимума */
+.custom-counter-item label {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    font-size: 12px !important; /* Уменьшен шрифт */
+    color: rgba(255, 255, 255, 1);
+    line-height: 1;
+    white-space: nowrap;
+}
+
+.custom-counter-item input[type="checkbox"] {
+    margin-right: 2px; /* Уменьшен отступ */
+    cursor: pointer;
+    transform: scale(0.85); /* Уменьшен размер */
+}
+
+/* Поле выбора цвета */
+.custom-counter-item input[type="color"] {
+    width: 16px !important; /* Уменьшен размер */
+    height: 16px !important; /* Уменьшен размер */
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    padding: 0;
+    flex-shrink: 0;
+}
+
+/* Сообщение при отсутствии счетчиков */
+.custom-counters .flex.column.align-center.justify-center {
+    width: 100%;
+    padding: 8px; /* Уменьшенные отступы */
+    color: #888;
+    font-style: italic;
+    font-size: 11px; /* Уменьшен шрифт */
+    text-align: center;
+}
+
+/* Адаптация void контейнера - ключевое изменение */
+.rogue-trader .stats .insanities-void-container .void {
+    min-height: 100px !important; /* Уменьшена минимальная высота */
+    max-height: 105px !important; /* Убрано ограничение по высоте */
+    padding: 2px;
+    display: flex;
+    flex-direction: column;
+    flex: 1; /* Занимает все пространство */
+    min-height: 0; /* Важно для flex */
+}
+
+/* Улучшение скроллбара */
+.custom-counters-content::-webkit-scrollbar {
+    width: 4px; /* Уменьшена ширина */
+}
+
+.custom-counters-content::-webkit-scrollbar-thumb {
+    background: #5d2f149e;
+    border-radius: 2px;
+}
+
+.custom-counters-content::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 2px;
+}
+
+/* Адаптация для темного режима */
+.rogue-trader.dark .custom-counter-item {
+    background: linear-gradient(135deg, #3a1d0c 0%, #5a1004 100%);
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+.rogue-trader.dark .custom-counter-item input[type="number"] {
+    background: rgba(0, 0, 0, 0.3);
+    border-color: rgba(255, 255, 255, 0.2);
+}
+/* ==================== КОНЕЦ КАСТОМНЫХ СЧЕТЧИКОВ ==================== */
 .rogue-trader .stats {
   display: flex;
   flex-direction: row;
@@ -917,18 +1245,25 @@ li.folder.collapsed > .folder-header {
 }
 .rogue-trader h1 {
   width: 100%;
-  height: 25px;
+  min-height: 25px; /* Минимальная высота, но может увеличиваться */
+  height: auto; /* Автоматическая высота под содержимое */
   border: 0 none;
   border-radius: 3px;
   font-family: var(--font-text);
   font-size: 16px;
-  line-height: initial;
+  line-height: 1.2; /* Улучшенный межстрочный интервал */
   margin: 0;
-  padding: 4px 4px;
+  padding: 6px 8px; /* Увеличиваем отступы для многострочного текста */
   text-align: center;
   text-transform: uppercase;
   background: #1b0f08b8;
   color: var(--color-title);
+  word-wrap: break-word; /* Перенос длинных слов */
+  white-space: normal; /* Разрешаем перенос строк */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box; /* Учитываем padding в общей высоте */
 }
 .rogue-trader button {
   background: transparent;
@@ -1156,14 +1491,50 @@ li.folder.collapsed > .folder-header {
   height: 90%;
   width: 90%;
 }
+
+.rogue-trader .stats .insanities-void-container {
+    display: flex;
+    flex-direction: column;
+    width: calc(23% - 2px);
+    margin-right: 2px;
+    align-items: stretch;
+    height: auto;
+}
+
+/* Insanities - уменьшен до размера содержимого */
+.rogue-trader .stats .insanities-void-container .insanities {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    width: 100%;
+    margin-right: 0;
+    align-items: center;
+    height: auto !important; /* Принудительно auto высота */
+    min-height: fit-content;
+    flex: 0 0 auto; /* Не растягивается */
+}
+
+/* Пустой блок для заполнения пространства */
+.rogue-trader .stats .insanities-void-container .void {
+    flex: 1 1 auto; /* Заполняет оставшееся пространство */
+    border: 2px solid var(--color-border);
+    border-radius: 3px;
+    min-height: 0; /* Важно для flex */
+    margin-top: 2px;
+    background: transparent;
+}
+
 .rogue-trader .stats .insanities {
   display: flex;
   flex-direction: column;
   flex-wrap: wrap;
-  width: calc(23% - 2px);
+  width: calc(23% - 2px); /* Оставляем ту же ширину */
   margin-right: 2px;
   align-items: center;
+  height: auto; /* Автоматическая высота */
+  min-height: fit-content; /* Минимальная высота по содержимому */
 }
+
 .rogue-trader .stats .insanities .total {
   font-size: 24px;
   height: 50px;
@@ -1196,8 +1567,8 @@ li.folder.collapsed > .folder-header {
   width: 100%;
 }
 .rogue-trader .stats .insanities .item-list .items {
-  max-height: 187px;
-  height: 187px;
+  max-height: 80px;
+  height: 80px;
 }
 .rogue-trader .stats .insanities .item-list .items .item .name {
   flex-basis: 90%;
@@ -1499,12 +1870,29 @@ li.folder.collapsed > .folder-header {
 .rogue-trader .combat .movement .information.initiative label {
   flex-basis: 30%;
 }
+
+.rogue-trader .combat .weapons-container {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    margin-top: 2px;
+    align-items: stretch; /* Выравнивание по высоте */
+    gap: 2px; /* Отступ между блоками */
+}
+.rogue-trader .combat .sheald,
 .rogue-trader .combat .weapons {
-  display: flex;
-  flex-direction: column;
-  flex-wrap: wrap;
-  margin-top: 2px;
-  flex-basis: 100%;
+    display: flex;
+    flex-direction: column;
+    height: 100%; /* Занимают всю доступную высоту */
+    min-height: 200px; /* Минимальная высота */
+}
+.rogue-trader .combat .sheald {
+    flex: 0 0 30%; /* Фиксированные 20% ширины */
+    max-width: 30%;
+}
+.rogue-trader .combat .weapons {
+    flex: 1; /* Занимает оставшееся пространство */
+    min-width: 0; /* Важно для корректного сжатия */
 }
 .rogue-trader .combat {
   height: 100%;
@@ -1577,6 +1965,20 @@ li.folder.collapsed > .folder-header {
 }
 .rogue-trader .combat .weapons .item-list .items {
   min-height: 100px;
+}
+.rogue-trader .combat .wounds .item-list .items .item {
+    width: 100%;
+    justify-content: space-between;
+}
+
+.rogue-trader .combat .wounds .item-list .items .item .name {
+    flex-basis: 90%;
+    align-items: center;
+}
+
+.rogue-trader .combat .wounds .item-list .items .item .button {
+    flex-basis: 5%;
+    text-align: center;
 }
 .rogue-trader .combat .psychic-powers {
   display: flex;
@@ -1910,6 +2312,938 @@ li.folder.collapsed > .folder-header {
 .rogue-trader .gear .all-gear .item-list .items .gear {
   width: 100%;
 }
+/* Reputation Tab Styles - FIXED */
+.rogue-trader .reputation {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    gap: 15px;
+    overflow: hidden;
+    box-sizing: border-box;
+}
+
+.rogue-trader .reputation * {
+    box-sizing: border-box;
+}
+
+.rogue-trader .reputation .row1 {
+    display: flex;
+    flex: 0 0 auto;
+    height: 45%;
+    min-height: 250px;
+    max-height: 350px;
+    gap: 15px;
+    width: 100%;
+    overflow: hidden;
+}
+
+.rogue-trader .reputation .row2 {
+    flex: 1;
+    min-height: 300px;
+    max-height: 50vh;
+    overflow: hidden;
+}
+
+/* Аватар */
+.rogue-trader .reputation .row1 .avatar {
+    flex: 0 0 30%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+    overflow: hidden;
+}
+
+.rogue-trader .reputation .row1 .avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    border-radius: 5px;
+    max-width: 100%;
+    max-height: 100%;
+}
+
+.rogue-trader .reputation .row1 .avatar img.reputation-img {
+    opacity: 0.7;
+    border: none;
+    border-radius: 3px;
+}
+
+/* Правый блок */
+.rogue-trader .reputation .row1 .right-column {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    min-height: 0;
+    min-width: 0;
+    overflow: hidden;
+}
+
+/* Фактор прибыли */
+.rogue-trader .reputation .row1 .right-column .profit-factor {
+    flex: 0 0 auto;
+    height: auto;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    min-width: 0;
+    padding: 5px;
+}
+
+.rogue-trader .reputation .row1 .right-column .profit-factor {
+    flex: 0 0 auto;
+    height: auto;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    min-width: 0;
+    padding: 10px;
+    align-items: center;
+    justify-content: center;
+}
+
+.rogue-trader .reputation .profit-factor .characteristic {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+    width: 100%;
+}
+
+.rogue-trader .reputation .profit-factor .characteristic .name {
+    font-size: 20px;
+    text-align: center;
+    font-weight: bold;
+    font-family: var(--font-text);
+    color: var(--color-text);
+    margin: 0;
+    padding: 0;
+    flex-shrink: 1;
+    min-width: 0;
+    white-space: nowrap;
+}
+
+.rogue-trader .reputation .profit-factor .characteristic .name button {
+    background: transparent;
+    border: none;
+    color: var(--color-text);
+    font-family: inherit;
+    font-size: inherit;
+    font-weight: inherit;
+    cursor: pointer;
+    padding: 5px 8px;
+    text-align: center;
+    display: inline-block;
+    white-space: nowrap;
+    line-height: 1.2;
+}
+
+.rogue-trader .reputation .profit-factor .characteristic .name button:hover {
+    text-shadow: 0 0 8px var(--color-highlight);
+}
+
+.rogue-trader .reputation .profit-factor .characteristic .total {
+    font-size: 24px;
+    height: 50px;
+    width: 50px;
+    background: #c1908161;
+    border: 1px solid var(--color-border);
+    border-radius: 3px;
+    box-shadow: inset 0 0 6px #7b3000;
+    color: var(--color-text);
+    font-family: var(--font-text);
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin: 0;
+    padding: 0;
+}
+
+.rogue-trader .reputation .profit-factor .characteristic .total {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    border-right: none;
+}
+
+.rogue-trader .reputation .profit-factor .characteristic .name {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+    background: #c1908161;
+    border: 1px solid var(--color-border);
+    border-left: none;
+    box-shadow: inset 0 0 6px #7b3000;
+    padding: 0 12px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.rogue-trader .reputation .profit-factor .characteristic .name span,
+.rogue-trader .reputation .profit-factor .characteristic .name button {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.rogue-trader .reputation .profit-factor h1 {
+    width: 100%;
+    height: 25px;
+    border: 0 none;
+    border-radius: 3px;
+    font-family: var(--font-text);
+    font-size: 16px;
+    line-height: initial;
+    margin: 0 0 15px 0;
+    padding: 4px 4px;
+    text-align: center;
+    text-transform: uppercase;
+    background: #c1908161;
+    color: var(--color-title);
+}
+
+.rogue-trader .reputation .profit-factor.border {
+    border: 2px solid var(--color-border);
+    border-radius: 3px;
+    padding: 15px;
+}
+
+.rogue-trader .reputation .profit-factor {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Отношения */
+.rogue-trader .reputation .row1 .right-column .relations {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    min-width: 0;
+    overflow: hidden;
+}
+
+/* Торговля */
+.rogue-trader .reputation .row2 .trade {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    overflow: hidden;
+    width: 100%;
+}
+.rogue-trader .reputation .trade .item-list .header {
+    font-weight: bold;
+}
+
+.rogue-trader .reputation .trade-content {
+    display: flex;
+    flex-direction: row;
+    flex: 1;
+    min-height: 0;
+    margin-top: 10px;
+    overflow: hidden;
+    gap: 15px;
+}
+
+.rogue-trader .reputation .trade-content .trade-list {
+    flex: 1 1 calc(60% - 7.5px);
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    min-width: 0;
+    overflow: hidden;
+}
+
+.rogue-trader .reputation .trade-content .trade-notes {
+    flex: 1 1 calc(40% - 7.5px);
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    min-width: 0;
+    overflow: hidden;
+}
+
+.rogue-trader .reputation .trade-content .trade-notes .editor-content {
+    flex: 1;
+    min-height: 150px;
+    max-height: 100%;
+    overflow-y: auto;
+}
+
+.rogue-trader .reputation .trade-content .trade-notes h2 {
+    width: 100%;
+    height: 25px;
+    border: 0 none;
+    border-radius: 3px;
+    font-family: var(--font-text);
+    font-size: 14px;
+    line-height: initial;
+    margin: 0 0 8px 0;
+    padding: 4px 4px;
+    text-align: center;
+    text-transform: uppercase;
+    background: #5d2f149e;
+    color: var(--color-title);
+    flex: 0 0 auto;
+}
+
+.rogue-trader .reputation .trade-content .trade-notes textarea {
+    flex: 1;
+    min-height: 150px;
+    resize: vertical;
+    font-family: var(--font-text);
+    font-size: 14px;
+    padding: 8px;
+    background: #c1908161;
+    border: 1px solid var(--color-border);
+    border-radius: 3px;
+    box-shadow: inset 0 0 6px #7b3000;
+    color: var(--color-text);
+    min-width: 0;
+    width: 100%;
+}
+
+/* Общие стили для item-list */
+.rogue-trader .reputation .item-list {
+    display: flex;
+    flex-direction: column;
+    margin-top: 5px;
+    flex: 1;
+    min-height: 0;
+    min-width: 0;
+}
+
+.rogue-trader .reputation .item-list .header {
+    width: 100%;
+    height: auto;
+    min-height: 30px;
+    border: 0 none;
+    border-radius: 3px;
+    font-family: var(--font-text);
+    font-size: 16px;
+    line-height: 14px;
+    margin: 0;
+    padding: 4px 8px;
+    text-align: center;
+    background: #5d2f149e;
+    color: var(--color-title);
+    flex: 0 0 auto;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.rogue-trader .reputation .item-list .items {
+    overflow-y: auto;
+    overflow-x: hidden;
+    flex: 1;
+    padding: 4px;
+    min-height: 0;
+    min-width: 0;
+}
+
+.rogue-trader .reputation .item-list .items .item {
+    align-items: center;
+    padding: 4px 8px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    min-width: 0;
+}
+
+.rogue-trader .reputation .item-list .items .item:last-child {
+    border-bottom: none;
+}
+
+.rogue-trader .reputation .item-list .items .item:nth-child(odd) {
+    background: rgba(0, 0, 0, 0.2);
+}
+
+/* Relation Row */
+.rogue-trader .reputation .relation.item {
+    justify-content: space-between;
+    gap: 10px;
+    min-width: 0;
+    width: 100%;
+}
+
+.rogue-trader .reputation .relation.item .name {
+    flex: 2;
+    min-width: 0;
+    max-width: 100%;
+}
+
+.rogue-trader .reputation .relation.item .type {
+    flex: 1;
+    min-width: 0;
+    max-width: 100%;
+}
+
+.rogue-trader .reputation .relation.item .reputation {
+    flex: 1.5;
+    min-width: 0;
+    max-width: 100%;
+}
+
+/* Специальные стили для элементов внутри отношений */
+.rogue-trader .reputation .relations .item-list {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    min-width: 0;
+    overflow: hidden;
+    width: 100%;
+}
+
+.rogue-trader .reputation .relations .items {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    min-height: 0;
+    min-width: 0;
+    width: 100%;
+}
+
+/* Специальные стили для элементов внутри торговли - ИСПРАВЛЕННЫЙ ВАРИАНТ */
+.rogue-trader .reputation .trade-list .item-list {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    min-width: 0;
+    overflow: hidden;
+}
+
+.rogue-trader .reputation .trade-list .item-list .items {
+    overflow-y: auto;
+    overflow-x: hidden;
+    flex: 1;
+    padding: 4px;
+    min-height: 0;
+}
+
+.rogue-trader .reputation .trade-list .items {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    min-height: 0;
+    min-width: 0;
+    width: 100%;
+}
+
+/* Исправление для кнопок */
+.rogue-trader .reputation button {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+}
+
+/* Исправление для flex-контейнеров внутри элементов */
+.rogue-trader .reputation .flex.row {
+    min-width: 0;
+}
+
+.rogue-trader .reputation .flex.column {
+    min-width: 0;
+}
+
+/* В файл стилей добавьте */
+.reputation .faction.item,
+.reputation .trade-faction.item {
+    margin: 2px 0;
+    padding: 4px;
+    border-bottom: 1px solid #666;
+}
+
+.reputation .faction.item input,
+.reputation .trade-faction.item input {
+    background: #c1908161;
+    border: 1px solid #666;
+    color: rgb(0, 0, 0);
+}
+
+.reputation .faction.item .name,
+.reputation .trade-faction.item .name {
+    flex: 2;
+}
+
+.reputation .faction.item .type,
+.reputation .faction.item .reputation {
+    flex: 1;
+    margin: 0 5px;
+}
+
+.reputation .trade-faction.item .bonus {
+    flex: 1;
+    margin: 0 5px;
+}
+
+.reputation .faction-delete,
+.reputation .trade-faction .faction-delete {
+    flex: 0 0 30px;
+}
+
+/* Стили для выравнивания колонок в списках репутации */
+.rogue-trader .reputation .item-list .header,
+.rogue-trader .reputation .item-list .items .item {
+    display: flex;
+    align-items: center;
+    padding: 4px 8px;
+}
+
+/* Отношения - две колонки */
+.rogue-trader .reputation .relations .item-list .header {
+    justify-content: space-between;
+    padding: 6px 8px;
+}
+
+.rogue-trader .reputation .relations .item-list .header .name {
+    flex: 0 0 70%;
+    text-align: left;
+    padding-left: 10px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+}
+
+.rogue-trader .reputation .relations .item-list .header .reputation {
+    flex: 0 0 30%;
+    text-align: center;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.rogue-trader .reputation .relations .items .item {
+    justify-content: space-between;
+    min-height: 32px;
+}
+
+.rogue-trader .reputation .relations .items .item .name {
+    flex: 0 0 70%;
+    text-align: left;
+    padding-left: 10px;
+    display: flex;
+    align-items: center;
+}
+
+.rogue-trader .reputation .relations .items .item .reputation {
+    flex: 0 0 30%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.rogue-trader .reputation .relations .items .item .reputation select {
+    width: 90%;
+    text-align: center;
+    padding: 2px 4px;
+}
+
+/* Торговля - пять колонок - ИСПРАВЛЕННЫЙ ВАРИАНТ */
+.rogue-trader .reputation .trade-list .item-list .header {
+    justify-content: space-between;
+    padding: 6px 8px;
+    gap: 5px;
+}
+
+/* Заголовки точно соответствуют элементам */
+.rogue-trader .reputation .trade-list .item-list .header .name {
+    flex: 0 0 35%;
+    text-align: left;
+    padding-left: 10px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+}
+
+.rogue-trader .reputation .trade-list .item-list .header .trader {
+    flex: 0 0 15%;
+    text-align: center;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.rogue-trader .reputation .trade-list .item-list .header .bonus {
+    flex: 0 0 15%;
+    text-align: center;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.rogue-trader .reputation .trade-list .item-list .header .profit-factor {
+    flex: 0 0 15%;
+    text-align: center;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.rogue-trader .reputation .trade-list .item-list .header .button {
+    flex: 0 0 60px;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Элементы точно соответствуют заголовкам */
+.rogue-trader .reputation .trade-list .items .item {
+    justify-content: space-between;
+    min-height: 32px;
+    gap: 5px;
+}
+
+/* Name - точное соответствие */
+.rogue-trader .reputation .trade-list .items .item .name {
+    flex: 0 0 35%;
+    display: flex;
+    align-items: center;
+    padding-left: 10px;
+}
+
+.rogue-trader .reputation .trade-list .items .item .name input {
+    width: 100%;
+    text-align: left;
+    box-sizing: border-box;
+}
+
+/* Trader - точное соответствие */
+.rogue-trader .reputation .trade-list .items .item .trader {
+    flex: 0 0 15%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.rogue-trader .reputation .trade-list .items .item .trader select {
+    width: 90%;
+    text-align: center;
+    padding: 2px 4px;
+    box-sizing: border-box;
+}
+
+/* Bonus - точное соответствие */
+.rogue-trader .reputation .trade-list .items .item .bonus {
+    flex: 0 0 15%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.rogue-trader .reputation .trade-list .items .item .bonus input {
+    width: 80%;
+    text-align: center;
+    padding: 2px 4px;
+    box-sizing: border-box;
+}
+
+/* Profit-factor - точное соответствие */
+.rogue-trader .reputation .trade-list .items .item .profit-factor {
+    flex: 0 0 15%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.rogue-trader .reputation .trade-list .items .item .profit-factor input {
+    width: 80%;
+    text-align: center;
+    padding: 2px 4px;
+    box-sizing: border-box;
+    background: #c1908161;
+    color: #000000;
+    cursor: not-allowed;
+}
+
+/* Button - точное соответствие */
+.rogue-trader .reputation .trade-list .items .item .button {
+    flex: 0 0 60px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Убедимся, что все элементы списков имеют одинаковую высоту */
+.rogue-trader .reputation .item-list .items .item {
+    min-height: 36px;
+    align-items: center;
+}
+
+/* Добавляем границы для визуального разделения колонок */
+.rogue-trader .reputation .trade-list .item-list .header > div,
+.rogue-trader .reputation .relations .item-list .header > div {
+    border-right: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.rogue-trader .reputation .trade-list .item-list .header > div:last-child,
+.rogue-trader .reputation .relations .item-list .header > div:last-child {
+    border-right: none;
+}
+
+/* Стили для инпутов и селектов внутри репутации */
+.rogue-trader .reputation input[type="text"],
+.rogue-trader .reputation input[type="number"],
+.rogue-trader .reputation select,
+.rogue-trader .reputation textarea {
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+/* Улучшенные стили для подсветки найденных элементов */
+.search-highlight {
+    animation: highlight-pulse 1.5s ease-in-out infinite alternate;
+    background: linear-gradient(135deg, 
+        rgba(255, 255, 0, 0.3) 0%, 
+        rgba(255, 204, 0, 0.4) 25%, 
+        rgba(255, 153, 0, 0.5) 50%, 
+        rgba(255, 102, 0, 0.4) 75%, 
+        rgba(255, 255, 0, 0.3) 100%) !important;
+    border: 2px solid transparent !important;
+    border-image: linear-gradient(45deg, #ffcc00, #ff9900, #ff6600, #ffcc00) !important;
+    border-image-slice: 1 !important;
+    position: relative;
+    z-index: 1;
+    transform: translateZ(0);
+    backface-visibility: hidden;
+}
+
+/* Эффект внутреннего свечения */
+.search-highlight::before {
+    content: '';
+    position: absolute;
+    top: -4px;
+    left: -4px;
+    right: -4px;
+    bottom: -4px;
+    background: linear-gradient(45deg, 
+        rgba(255, 255, 0, 0.1), 
+        rgba(255, 204, 0, 0.2), 
+        rgba(255, 255, 0, 0.1));
+    border-radius: inherit;
+    z-index: -1;
+    animation: glow-pulse 2s ease-in-out infinite;
+    opacity: 0.7;
+}
+
+/* Эффект внешнего свечения */
+.search-highlight::after {
+    content: '';
+    position: absolute;
+    top: -6px;
+    left: -6px;
+    right: -6px;
+    bottom: -6px;
+    background: radial-gradient(circle at center, 
+        rgba(255, 255, 0, 0.4) 0%,
+        rgba(255, 204, 0, 0.3) 30%,
+        rgba(255, 153, 0, 0.2) 50%,
+        rgba(255, 102, 0, 0.1) 70%,
+        transparent 100%);
+    border-radius: inherit;
+    z-index: -2;
+    animation: outer-glow 3s ease-in-out infinite alternate;
+    opacity: 0.5;
+}
+
+/* Основная анимация пульсации */
+@keyframes highlight-pulse {
+    0% {
+        box-shadow: 
+            0 0 5px rgba(255, 204, 0, 0.3),
+            0 0 10px rgba(255, 204, 0, 0.2),
+            0 0 15px rgba(255, 153, 0, 0.1),
+            inset 0 0 10px rgba(255, 255, 0, 0.2);
+        transform: scale(1);
+        border-width: 2px;
+    }
+    50% {
+        box-shadow: 
+            0 0 10px rgba(255, 204, 0, 0.5),
+            0 0 20px rgba(255, 204, 0, 0.4),
+            0 0 30px rgba(255, 153, 0, 0.3),
+            inset 0 0 15px rgba(255, 255, 0, 0.3);
+        transform: scale(1.005);
+        border-width: 3px;
+    }
+    100% {
+        box-shadow: 
+            0 0 5px rgba(255, 204, 0, 0.3),
+            0 0 10px rgba(255, 204, 0, 0.2),
+            0 0 15px rgba(255, 153, 0, 0.1),
+            inset 0 0 10px rgba(255, 255, 0, 0.2);
+        transform: scale(1);
+        border-width: 2px;
+    }
+}
+
+/* Анимация внутреннего свечения */
+@keyframes glow-pulse {
+    0%, 100% {
+        opacity: 0.5;
+        filter: blur(2px);
+    }
+    50% {
+        opacity: 0.8;
+        filter: blur(4px);
+    }
+}
+
+/* Анимация внешнего свечения */
+@keyframes outer-glow {
+    0% {
+        opacity: 0.3;
+        transform: scale(1);
+    }
+    100% {
+        opacity: 0.7;
+        transform: scale(1.05);
+    }
+}
+
+/* Дополнительный вариант для особого выделения (можно использовать для текущего выбранного элемента) */
+.search-highlight.strong {
+    animation: strong-highlight 1s ease-in-out infinite alternate;
+    background: linear-gradient(135deg, 
+        rgba(255, 255, 100, 0.4) 0%, 
+        rgba(255, 255, 0, 0.6) 50%, 
+        rgba(255, 255, 100, 0.4) 100%) !important;
+    border: 3px solid #ffcc00 !important;
+}
+
+@keyframes strong-highlight {
+    0% {
+        box-shadow: 
+            0 0 10px #ffcc00,
+            0 0 20px #ff9900,
+            0 0 30px #ff6600,
+            inset 0 0 20px rgba(255, 255, 0, 0.4);
+        transform: scale(1);
+    }
+    100% {
+        box-shadow: 
+            0 0 15px #ffcc00,
+            0 0 30px #ff9900,
+            0 0 45px #ff6600,
+            inset 0 0 25px rgba(255, 255, 0, 0.6);
+        transform: scale(1.01);
+    }
+}
+
+/* Для текстовых элементов добавим мерцание текста */
+.search-highlight .highlighted-text {
+    position: relative;
+    display: inline-block;
+}
+
+.search-highlight .highlighted-text::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -10px;
+    right: -10px;
+    bottom: 0;
+    background: linear-gradient(90deg, 
+        transparent 0%,
+        rgba(255, 255, 0, 0.2) 25%,
+        rgba(255, 255, 0, 0.4) 50%,
+        rgba(255, 255, 0, 0.2) 75%,
+        transparent 100%);
+    z-index: -1;
+    animation: text-shine 3s ease-in-out infinite;
+    transform: translateX(-100%);
+}
+
+@keyframes text-shine {
+    0% {
+        transform: translateX(-100%);
+    }
+    100% {
+        transform: translateX(200%);
+    }
+}
+
+/* Адаптация для темной темы */
+.rogue-trader .search-highlight {
+    color: #000 !important;
+    text-shadow: 0 0 3px rgba(255, 255, 0, 0.7), 0 0 5px rgba(255, 204, 0, 0.5);
+}
+
+.rogue-trader.chat button {
+  width: 50%;
+  height: 25px;
+  background: #641414;
+  color: var(--color-title);
+  font-family: var(--font-text);
+  border: 0 none;
+  border-radius: 3px;
+  cursor: pointer;
+  padding: 0;
+  margin: 0;
+  text-align: center;
+  line-height: 25px;
+}
+
+.rogue-trader.chat button:hover {
+  background: var(--color-foreground);
+}
+
+.rogue-trader.chat .flex-column {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  flex-basis: 100%;
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid var(--color-border);
+}
+
+.rogue-trader.chat .flex-column button:first-child {
+  margin-right: 5px;
+}
+
+.rogue-trader.chat .flex-column button:last-child {
+  margin-left: 5px;
+}
+
+/* Улучшенная анимация для кнопок с подсветкой */
+.search-highlight button {
+    position: relative;
+    z-index: 2;
+}
+
+/* Эффект при наведении на подсвеченный элемент */
+.search-highlight:hover {
+    animation-duration: 0.8s;
+    border-image: linear-gradient(45deg, #ffff00, #ffcc00, #ff9900, #ffff00) !important;
+}
+
+/* Для табличных элементов */
+.rogue-trader .item-list .items .item.search-highlight {
+    transform-origin: center left;
+    transition: transform 0.3s ease;
+}
+
+.rogue-trader .item-list .items .item.search-highlight:hover {
+    transform: translateX(5px);
+    z-index: 10;
+}
+
 .rogue-trader .progression .aptitudes {
   display: flex;
   flex-direction: row;
@@ -2140,6 +3474,37 @@ li.folder.collapsed > .folder-header {
   margin-left: 1px;
   margin-top: 2px;
 }
+/* Стили для заголовка специализаций */
+.rogue-trader .progression .skills .specialist-header {
+    justify-content: space-between;
+    align-items: center;
+    padding-right: 4px; /* Чтобы соответствовать отступам других заголовков */
+}
+
+/* Кнопка создания кастомной специализации */
+.rogue-trader .progression .skills .specialist-header .create-custom-speciality {
+    flex: 0 0 auto;
+    margin: 0;
+    padding: 0;
+    margin-right: 8px;
+    background: transparent;
+    border: none;
+    color: var(--color-title);
+    font-size: 10px;
+    line-height: 14px;
+}
+
+/* Имя навыка в заголовке специализации */
+.rogue-trader .progression .skills .specialist-header .name {
+    flex-grow: 1;
+    text-align: left;
+    padding-left: 4px;
+}
+
+/* Чтобы кнопка выглядела так же, как другие кнопки добавления */
+.rogue-trader .progression .skills .specialist-header .create-custom-speciality i {
+    font-size: 10px;
+}
 .rogue-trader .progression .skills .item-list .header {
   margin-top: 5px;
 }
@@ -2159,7 +3524,7 @@ li.folder.collapsed > .folder-header {
   margin-left: 5px;
 }
 .rogue-trader .progression .skills .item-list .items {
-  max-height: 382px;
+  max-height: 345px;
   height: 382px;
 }
 .rogue-trader .progression .skills .item-list .items .item .name {

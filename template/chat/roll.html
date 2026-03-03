@@ -3,86 +3,165 @@
         {{#if isReRoll}}
             <h1>{{localize "CHAT.REROLL"}}</h1>
         {{/if}}
-        {{# unless weaponTraits.skipAttackRoll}}
-            <h1>{{name}} ({{target}})</h1>
-            {{#if isSuccess}}
-                <h3><span style="color: var(--color-success)">{{localize "CHAT.SUCCESS"}}</span> ({{result}})</h3>
+        
+        <!-- Блок для автоматического успеха навигатора -->
+        {{#if isNavigatorAutoSuccess}}
+            <h1>{{name}}</h1>
+            <h3><span style="color: var(--color-success)">{{localize "CHAT.AUTO_SUCCESS"}}</span></h3>
+            {{#if navigatorTest}}
+                <p><strong>{{localize "TITLE.POWERTEST"}}:</strong> {{localize navigatorTest}}</p>
+            {{/if}}
+            {{#if skillLevelDisplay}}
+                <p><strong>{{localize "TITLE.NA_SKILL"}}:</strong> {{skillLevelDisplay}}</p>
+            {{/if}}
+            
+            <!-- Описание навигатора -->
+            {{#if navigatorDescription}}
+                <div class="navigator-description" style="margin-top: 15px; padding: 10px; border-top: 1px solid #000000; background-color: rgba(0,0,0,0.1);">
+                    <div class="description-content" style="font-size: 16px; line-height: 1.4; color: #000000;">
+                        {{{navigatorDescription}}}
+                    </div>
+                </div>
+            {{/if}}
+            
+        <!-- Обычный бросок (не автоматический успех) -->
+        {{else}}
+            {{# unless weaponTraits.skipAttackRoll}}
+                <h1>{{name}} ({{target}})</h1>
+                {{#if isSuccess}}
+                    <h3><span style="color: var(--color-success)">{{localize "CHAT.SUCCESS"}}</span> ({{result}})</h3>
+                {{else}}
+                    <h3><span style="color: var(--color-failure)">{{localize "CHAT.FAILURE"}}</span> ({{result}})</h3>
+                {{/if}}
+                {{#if protectionRating}}
+                    <p><strong>{{localize "FORCE_FIELD.PROTECTION_RATING"}}:</strong> {{protectionRating}}</p>
+                {{/if}}
+
+                {{#if isOverload}}
+                    <h3><span style="color: var(--color-failure)">{{localize "CHAT.OVERLOAD"}}</span></h3>
+                {{/if}}
+
+                {{#if modifier}}
+                    <p><strong>{{localize "CHAT.TEST_MODIFIER"}}:</strong> {{modifier}}</p>
+                {{/if}}
+
+                {{#if rolledWith}}
+                    <p><strong>{{localize "CHAT.ROLLED_WITH"}}:</strong> {{rolledWith}}</p>
+                {{/if}}
+
+                {{#if aim}}
+                    <p><strong>{{localize "CHAT.AIMING"}}:</strong> {{aim.text}}</p>
+                {{/if}}
+                {{#if rangeText}}
+                    <p><strong>{{localize "CHAT.ATTACK_RANGE"}}:</strong> {{rangeText}}</p>
+                {{/if}}
+
+                {{#if attackType}}
+                    <p><strong>{{localize "CHAT.ATTACK_TYPE"}}:</strong> {{attackType.text}}</p>
+                {{/if}}
+
+                {{#if isSuccess}}
+                    {{#if showDoS}}
+                        <p><strong>{{localize "CHAT.DOS"}}:</strong> {{dos}}</p>
+                        {{#if numberOfHit}}
+                            <p><strong>{{localize "CHAT.NUMBER_OF_HIT"}}:</strong> {{numberOfHit}}</p>
+                        {{/if}}
+                        {{#if showTotalDamage}}
+                            <p><strong>{{localize "CHAT.DAMAGE_TOTAL"}}:</strong> <span class="damage-total">{{salvoTotal}}</span></p>
+                        {{/if}}
+                        {{#if isCritical}}
+                            <h3></h3>
+                            <p><strong>{{localize "CHAT.CRITICAL_HIT"}}</strong></p>
+                        {{/if}}
+                    {{/if}}
+                {{else}}
+                    {{#if showDoS}}
+                        <p><strong>{{localize "CHAT.DOF"}}:</strong> {{dof}}</p>
+                    {{/if}}
+                {{/if}}
+                
+                {{#if isNavigatorRoll}}
+                    <!-- Информация о навигаторском тесте -->
+                    {{#if navigatorTest}}
+                        <p><strong>{{localize "TITLE.POWERTEST"}}:</strong> {{localize navigatorTest}}</p>
+                    {{/if}}
+                    {{#if skillLevelDisplay}}
+                        <p><strong>{{localize "TITLE.NA_SKILL"}}:</strong> {{skillLevelDisplay}}</p>
+                    {{/if}}
+                    {{#if skillLevelModifier}}
+                        <p><strong>{{localize "TITLE.NA_MODIFIER"}}:</strong> +{{skillLevelModifier}}</p>
+                    {{/if}}
+                    {{#if navigatorDifficulty}}
+                        <p><strong>{{localize "TITLE.DIFFICULTY"}}:</strong> {{navigatorDifficulty}}</p>
+                    {{/if}}
+                    
+                    <!-- Описание навигатора -->
+                    {{#if navigatorDescription}}
+                        <div class="navigator-description" style="margin-top: 15px; padding: 10px; border-top: 1px solid #000000; background-color: rgba(0,0,0,0.1);">
+                            <div class="description-content" style="font-size: 16px; line-height: 1.4; color: #000000;">
+                                {{{navigatorDescription}}}
+                            </div>
+                        </div>
+                    {{/if}}
+                {{/if}}
+                
+                {{#if psy.display}}
+                    {{#if (eq psy.psyStrength "push")}}
+                    <p><strong>{{localize "CHAT.PSY_RATING"}}:</strong> {{psy.value}} ({{localize "CHAT.PSY_PUSH"}})</p>
+                    {{else}}
+                    <p><strong>{{localize "CHAT.PSY_RATING"}}:</strong> {{psy.value}}</p>
+                    {{/if}}
+                    {{#if psy.hasPhenomena}}
+                        {{#if psy.warpConduit}}
+                            <p><strong style="color: var(--color-failure)">{{localize "CHAT.HAS_PSYCHIC_PHENOMENA_WITH_WARPCONDUIT"}}</strong></p>
+                        {{else}}
+                            <p><strong style="color: var(--color-failure)">{{localize "CHAT.HAS_PSYCHIC_PHENOMENA"}}</strong></p>
+                        {{/if}}
+                    {{/if}}
+                {{/if}}
+                {{#if weaponSpecial}}
+                    <p><strong>{{localize "CHAT.WEAPON_TRAITS"}}: </strong>{{weaponSpecial}}</p>
+                {{/if}}
             {{else}}
-                <h3><span style="color: var(--color-failure)">{{localize "CHAT.FAILURE"}}</span> ({{result}})</h3>
-            {{/if}}
-            {{#if protectionRating}}
-                <p><strong>{{localize "FORCE_FIELD.PROTECTION_RATING"}}:</strong> {{protectionRating}}</p>
-            {{/if}}
-
-            {{#if isOverload}}
-                <h3><span style="color: var(--color-failure)">{{localize "CHAT.OVERLOAD"}}</span></h3>
-            {{/if}}
-
-            {{#if modifier}}
-                <p><strong>{{localize "CHAT.TEST_MODIFIER"}}:</strong> {{modifier}}</p>
-            {{/if}}
-
-            {{#if rolledWith}}
-                <p><strong>{{localize "CHAT.ROLLED_WITH"}}:</strong> {{rolledWith}}</p>
-            {{/if}}
-
-            {{#if aim}}
-                <p><strong>{{localize "CHAT.AIMING"}}:</strong> {{aim.text}}</p>
-            {{/if}}
-            {{#if rangeText}}
-                <p><strong>{{localize "CHAT.ATTACK_RANGE"}}:</strong> {{rangeText}}</p>
-            {{/if}}
-
-            {{#if attackType}}
-                <p><strong>{{localize "CHAT.ATTACK_TYPE"}}:</strong> {{attackType.text}}</p>
-            {{/if}}
-
+                <h1>{{name}}</h1>
+            {{/unless}}
+        {{/if}}
+        
+        <!-- Добавлены кнопки для уклонения и броска урона -->
+        {{#if isCombatTest}}
             {{#if isSuccess}}
                 {{#if showDoS}}
                     <p><strong>{{localize "CHAT.DOS"}}:</strong> {{dos}}</p>
                     {{#if numberOfHit}}
                         <p><strong>{{localize "CHAT.NUMBER_OF_HIT"}}:</strong> {{numberOfHit}}</p>
                     {{/if}}
-                    {{#if showTotalDamage}}
-                        <p><strong>{{localize "CHAT.DAMAGE_TOTAL"}}:</strong> <span class="damage-total">{{salvoTotal}}</span></p>
-                    {{/if}}
-                    {{#if isCritical}}
-                        <h3></h3>
-                        <p><strong>{{localize "CHAT.CRITICAL_HIT"}}</strong></p>
-                    {{/if}}
                 {{/if}}
-            {{else}}
-                {{#if showDoS}}
-                    <p><strong>{{localize "CHAT.DOF"}}:</strong> {{dof}}</p>
-                {{/if}}
-            {{/if}}
-                    {{#if isNavigatorRoll}}
-                    <div class="navigator-description" style="margin-top: 15px; padding: 10px; border-top: 1px solid #000000; background-color: rgba(0,0,0,0.1);">
-                     <div class="description-content" style="font-size: 16px; line-height: 1; color: #000000;">
-                    {{{navigatorDescription}}}
+                
+                <!-- Показываем кнопки только если есть damages (т.е. урон еще не брошен) -->
+                {{#unless damages}}
+                            <div class="wrapper flex-column">
+                            <button class="invoke-test" data-message-id="{{this.id}}">
+                                {{localize "CHAT.ROLL_EVASION"}}
+                            </button>
+                            <button class="invoke-damage" data-message-id="{{this.id}}">
+                                {{localize "CHAT.ROLL_DAMAGE"}}
+                            </button>
+                            </div>
+                {{/unless}}
+                                {{#if isEvasion}}
+                    <!-- Блок результатов уклонения -->
+                    <div class="evasion-results" style="margin-top: 10px; padding: 10px; border-top: 1px solid #ccc;">
+                        <h4>{{localize "CHAT.EVASION_RESULTS"}}</h4>
+                        <p><strong>{{localize "CHAT.EVASION_TYPE"}}:</strong> {{evasionLabel}}</p>
+                        <p><strong>{{localize "CHAT.EVASION_DOS"}}:</strong> {{dos}}</p>
+                        {{#if wasAttackSuccessful}}
+                            <p><strong>{{localize "CHAT.REMAINING_HITS"}}:</strong> {{remainingHits}}</p>
+                        {{/if}}
                     </div>
-                    </div>
-                    {{/if}}
-            {{#if psy.display}}
-                {{#if (eq psy.psyStrength "push")}}
-                <p><strong>{{localize "CHAT.PSY_RATING"}}:</strong> {{psy.value}} ({{localize "CHAT.PSY_PUSH"}})</p>
-                {{else}}
-                <p><strong>{{localize "CHAT.PSY_RATING"}}:</strong> {{psy.value}}</p>
-                {{/if}}
-                {{#if psy.hasPhenomena}}
-                    {{#if psy.warpConduit}}
-                        <p><strong style="color: var(--color-failure)">{{localize "CHAT.HAS_PSYCHIC_PHENOMENA_WITH_WARPCONDUIT"}}</strong></p>
-                    {{else}}
-                        <p><strong style="color: var(--color-failure)">{{localize "CHAT.HAS_PSYCHIC_PHENOMENA"}}</strong></p>
-                    {{/if}}
                 {{/if}}
             {{/if}}
-            {{#if weaponSpecial}}
-                <p><strong>{{localize "CHAT.WEAPON_TRAITS"}}: </strong>{{weaponSpecial}}</p>
-            {{/if}}
-        {{else}}
-            <h1>{{name}}</h1>
-        {{/unless}}
+        {{/if}}
+        
         {{#each damages as |damage|}}
             {{#if hasLocation}}
             <h3 class="separator damage-location" data-location={{location}}>{{localize location}}</h3>
@@ -105,9 +184,11 @@
     
     <div class="dice-rolls" style="display:none">
         {{# unless weaponTraits.skipAttackRoll}}
-            <div class="dice-roll-render">
-                {{{render}}}
-            </div>
+            {{#unless isNavigatorAutoSuccess}} <!-- Не показываем для автоуспеха -->
+                <div class="dice-roll-render">
+                    {{{render}}}
+                </div>
+            {{/unless}}
         {{/unless}}
         {{#each damages as |damage|}}
             <p><strong>{{localize "CHAT.DAMAGE_HEADER"}}</strong></p>
@@ -122,5 +203,4 @@
             {{/if}}
         {{/each}}
     </div>
-    
 </div>

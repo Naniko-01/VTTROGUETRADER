@@ -1,0 +1,111 @@
+<!-- reputation.html -->
+<div class="flex wrap reputation">
+    <!-- Первая строка: аватар + правый блок -->
+    <div class="row1 flex">
+        <!-- Аватар -->
+                <div class="avatar">
+                    <img class="reputation-img" src="{{system.reputationImage}}" 
+                        data-edit="system.reputationImage" 
+                        title="{{actor.name}}"
+                        onerror="this.src='icons/svg/mystery-man.svg'; this.onerror=null;" />
+                </div>
+        <!-- Остальной код без изменений -->
+        <div class="right-column flex column">
+            <!-- Фактор Прибыли -->
+            <div class="profit-factor border">
+                <div class="characteristic">
+                    {{> systems/rogue-trader/template/sheet/characteristics/total.html characteristic=system.characteristics.ProfitFactor}}
+                    {{> systems/rogue-trader/template/sheet/characteristics/name.html characteristic=system.characteristics.ProfitFactor key="ProfitFactor"}}
+                </div>
+            </div>
+
+            <!-- Отношения -->
+            <div class="relations border">
+                <h1>ОТНОШЕНИЯ</h1>
+                <div class="item-list">
+                    <div class="flex header">
+                        <div class="name">{{localize "TITLE.FRACTION"}}</div>
+                        <div class="reputation">{{localize "TITLE.REP"}}</div>
+                    </div>
+                    <div class="items">
+                        {{#each system.relations.trade as |trade key|}}
+                            <div class="trade-faction item flex row" data-faction-key="{{key}}">
+                                <button class="name roll-reputation" data-faction-key="{{key}}" type="button"> {{trade.name}}</button>
+                                <div class="reputation">
+                                    <select name="system.relations.trade.{{key}}.rep" class="rep-select">
+                                        {{#select trade.rep}}
+                                            <option value="emeny">{{localize "TITLE.REP_EMENY"}}</option>
+                                            <option value="rival">{{localize "TITLE.REP_RIVAL"}}</option>
+                                            <option value="neutral">{{localize "TITLE.REP_NET"}}</option>
+                                            <option value="peer">{{localize "TITLE.REP_PEER"}}</option>
+                                            <option value="goodreputation">{{localize "TITLE.REP_GR"}}</option>
+                                        {{/select}}
+                                    </select>
+                                </div>
+                            </div>
+                        {{/each}}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Вторая строка: Торговля -->
+    <div class="row2 flex">
+        <!-- Торговля (объединенный блок) -->
+        <div class="trade border">
+            <h1>ТОРГОВЛЯ</h1>
+            <div class="trade-content flex row">
+                <!-- Левая колонка: список торговли -->
+                <div class="item-list trade-list">
+                    <div class="flex header">
+                        <div class="name">{{localize "TITLE.FRACTION"}}</div>
+                        <div class="trader">{{localize "TITLE.TRADE_S"}}</div>
+                        <div class="bonus">{{localize "TITLE.REP_BONUS"}}</div>
+                        <div class="profit-factor">{{localize "TITLE.PF"}}</div>
+                        <div class="button">
+                            <a class="faction-create" title="Добавить Новую Фракцию" data-faction-type="trade"><i class="fas fa-plus"></i></a>
+                        </div>
+                    </div>
+                    <div class="items">
+                        {{#each system.relations.trade as |trade key|}}
+                            <div class="trade-faction item flex row align-center" data-faction-key="{{key}}">
+                                <div class="name flex align-center">
+                                    <input type="text" name="system.relations.trade.{{key}}.name" 
+                                           value="{{trade.name}}" placeholder="Название фракции" />
+                                </div>
+                                <div class="trader flex align-center justify-center">
+                                    <select name="system.relations.trade.{{key}}.trader" class="trader-select">
+                                        {{#select trade.trader}}
+                                            <option value="trade">{{localize "TITLE.TRADE"}}</option>
+                                            <option value="barter">{{localize "TITLE.BARTER"}}</option>
+                                        {{/select}}
+                                    </select>
+                                </div>
+                                <div class="bonus flex align-center justify-center">
+                                    <input type="number" name="system.relations.trade.{{key}}.bonus" 
+                                           value="{{trade.bonus}}" class="bonus-input" />
+                                </div>
+                                <div class="profit-factor flex align-center justify-center">
+                                    <input type="number" value="{{../system.characteristics.ProfitFactor.total}}" 
+                                        data-dtype="Number" disabled class="pf-disabled" />
+                                </div>
+                                <div class="button flex align-center justify-center">
+                                    <button type="button" class="faction-delete button" data-faction-type="trade" data-faction-key="{{key}}">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        {{/each}}
+                    </div>
+                </div>
+
+                <!-- Правая колонка: записи -->
+                <div class="trade-notes border">
+                    <h2>ЗАПИСИ ПО ТОРГОВЛЕ</h2>
+                    {{editor system.reputationNotes target="system.reputationNotes" engine="prosemirror" button=true editable=true}}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -42,7 +42,14 @@
                     <div class="stat focus-power">
                         <label>{{localize "PSYCHIC_POWER.FOCUS_POWER"}}</label>
                         <input name="system.focusPower.difficulty" type="number" value="{{system.focusPower.difficulty}}" data-dtype="Number" />
-                        <input name="system.focusPower.test" type="text" value="{{system.focusPower.test}}" />
+                                                <select name="system.focuspowertest" type="text" value="{{system.focuspowertest}}">
+                            {{#select system.focuspowertest}}
+                                <option value="willpower">{{localize "TITLE.NAVI_WP"}}</option>
+                                <option value="psyniscience">{{localize "SKILL.PSYNISCIENCE"}}</option>
+                                <option value="awarness">{{localize "SKILL.AWARENESS"}}</option>
+                                <option value="corruption">{{localize "CORRUPTION.HEADER"}}</option>
+                            {{/select}}
+                        </select>
                     </div>
                     <div class="stat range">
                         <label>{{localize "PSYCHIC_POWER.RANGE"}}</label>

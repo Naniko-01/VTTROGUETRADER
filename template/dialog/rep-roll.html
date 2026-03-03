@@ -1,0 +1,84 @@
+<div class="rogue-trader dialog">
+    <h1>{{localize name}}</h1>
+    <div class="sheet-tabs tabs flex row" data-group="primary">
+        <b class="item" data-tab="trade">{{localize "TITLE.TRA"}}</b>
+        <b class="item" data-tab="supple">{{localize "TITLE.SUPPLE"}}</b>
+    </div>
+    
+
+    <!-- Вкладка для Торговли-->
+    <div class="tab" data-group="primary" data-tab="trade">
+        <form class="trade-roll-form">          
+            <div class="form-group" style="display: none;">
+                <input type="number" id="base-target" name="base-target" value="{{baseTarget}}" disabled>
+            </div>
+            <!-- Итоговая цель -->
+            <div class="form-group">
+                <label>{{localize "DIALOG.TARGET"}}:</label>
+                <input type="number" id="final-target-trade" value="{{baseTarget}}" readonly>
+            </div>
+            <div class="form-group">
+                <label>{{localize "DIALOG.MODIFIER"}}:</label>
+                <input type="number" id="modifier-skill-value" name="modifier-skill-value" value="{{modifier}}">
+            </div>
+            
+            <!-- Чекбокс для учета репутации -->
+            <div class="form-group">
+                <label>
+                    <input type="checkbox" id="use-reputation-trade" name="use-reputation-trade">
+                    Учитывать репутацию?
+                </label>
+                <input type="hidden" id="rep-modifier-trade" value="{{repModifier}}">
+            </div>
+            
+
+
+            <!-- Скрытые поля для передачи данных -->
+            <input type="hidden" id="skill-key" name="skill-key" value="{{skillKey}}">
+            <input type="hidden" id="speciality-key" name="speciality-key" value="{{specialityKey}}">
+            <input type="hidden" id="faction-key" name="faction-key" value="{{factionKey}}">
+            <input type="hidden" id="is-speciality" name="is-speciality" value="{{isSpeciality}}">
+        </form>
+    </div>
+    
+    <!-- Вкладка для Реквизиции -->
+    <div class="tab" data-group="primary" data-tab="supple">
+        <form class="supple-roll-form">
+            <!-- Информация о репутации -->            
+            <!-- Используем reputationBonus и profitFactor для расчета цели -->
+            <div class="form-group" style="display: none;">
+                <input type="number" id="reputation-bonus" value="{{reputationBonus}}" readonly>
+            </div>
+            <div class="form-group" style="display: none;">
+                <input type="number" id="profit-factor" value="{{profitFactor}}" readonly>
+            </div>
+            <div class="form-group" style="display: none;">
+                <input type="number" id="supple-base-target" value="{{suppleBaseTarget}}" readonly>
+            </div>
+            <!-- Итоговая цель -->
+            <div class="form-group">
+                <label>{{localize "DIALOG.TARGET"}}:</label>
+                <input type="number" id="supple-final-target" value="{{suppleBaseTarget}}" readonly>
+            </div>
+
+            <div class="form-group">
+                <label>{{localize "DIALOG.MODIFIER"}}:</label>
+                <input type="number" id="supple-modifier" value="0">
+            </div>
+            
+            <!-- Чекбокс для учета репутации -->
+            <div class="form-group">
+                <label>
+                    <input type="checkbox" id="use-reputation-supple" name="use-reputation-supple">
+                    Учитывать репутацию?
+                </label>
+                <input type="hidden" id="rep-modifier-supple" value="{{repModifier}}">
+            </div>
+            
+
+            
+            <!-- Скрытые поля для передачи данных -->
+            <input type="hidden" id="faction-key-supple" name="faction-key-supple" value="{{factionKey}}">
+        </form>
+    </div>
+</div>

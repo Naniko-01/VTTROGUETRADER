@@ -29,6 +29,20 @@ export class RogueTraderItem extends Item {
     return `${single}/${burst}/${full}`;
   }
 
+  get localizedSkillLevel() {
+    const skillLevel = this.system.skillLevel;
+    switch(skillLevel) {
+      case 'novice':
+        return game.i18n.localize('TITLE.NOVICE');
+      case 'adept':
+        return game.i18n.localize('TITLE.ADEPT');
+      case 'master':
+        return game.i18n.localize('TITLE.MASTER');
+      default:
+        return skillLevel;
+    }
+  }
+
   get DamageTypeShort() {
     switch (this.damageType) {
       case "energy":
@@ -346,8 +360,8 @@ export class RogueTraderItem extends Item {
   get subtype() { return this.system.type;}
 
   get part() { return this.system.part;}
-
-  get maxAgility() { return this.system.maxAgility;}
+  
+  get equipped() { return this.system.equipped; }
 
   get installed() { return this.system.installed;}
 

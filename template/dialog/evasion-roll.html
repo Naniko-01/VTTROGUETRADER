@@ -1,0 +1,31 @@
+<div class="rogue-trader dialog">
+  <div class="flex column wrap background border" style="flex-basis: 100%;margin-bottom: 5px">
+    <div class="wrapper">
+      <label>{{localize "DIALOG.EVASION_TYPE"}}</label>
+      <select id="evasionType" name="evasionType">
+        <option value="dodge">{{localize "SKILL.DODGE"}} ({{dodge.target}})</option>
+        <option value="parry">{{localize "SKILL.PARRY"}} ({{parry.target}})</option>
+        <option value="deny">{{localize "CHAT.DENY_THE_WITCH"}} ({{deny.target}})</option>
+      </select>
+    </div>
+    
+    <div class="wrapper" style="display: none;">
+      <label>{{localize "DIALOG.BASE_VALUE"}}</label>
+      <input type="number" id="baseValue" value="{{dodge.base}}" readonly>
+    </div>
+    
+    <div class="wrapper" style="display: none;">
+      <label>{{localize "DIALOG.BASE_TARGET"}}</label>
+      <input type="number" id="baseTarget" value="{{dodge.target}}" readonly>
+    </div>
+    
+    <div class="wrapper">
+      <label>{{localize "DIALOG.MODIFIER"}}</label>
+      <input type="number" id="modifier" value="0">
+    </div>
+    
+    <div class="wrapper" style="display: none;">
+      <label>{{localize "DIALOG.FINAL_TARGET"}}</label>
+      <input type="number" id="finalTarget" value="{{dodge.target}}" readonly>
+    </div>
+</div>

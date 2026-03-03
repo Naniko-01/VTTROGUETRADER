@@ -6,8 +6,8 @@ export class ExplorerSheet extends RogueTraderSheet {
     return mergeObject(super.defaultOptions, {
       classes: ["rogue-trader", "sheet", "actor"],
       template: "systems/rogue-trader/template/sheet/actor/explorer.html",
-      width: 720,
-      height: 881,
+      width: 1150,
+      height: 870,
       resizable: true,
       tabs: [
         {

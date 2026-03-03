@@ -1,0 +1,29 @@
+<div class="rogue-trader chat roll" data-actor-id="{{ownerId}}">
+    <div class="background border">
+        <h1>{{name}} ({{target}})</h1>
+        {{#if isSuccess}}
+            <h3><span style="color: var(--color-success)">{{localize "CHAT.SUCCESS"}}</span> ({{result}})</h3>
+        {{else}}
+            <h3><span style="color: var(--color-failure)">{{localize "CHAT.FAILURE"}}</span> ({{result}})</h3>
+        {{/if}}
+        
+        <p><strong>{{localize "CHAT.EVASION_TYPE"}}:</strong> {{evasionLabel}}</p>
+        <p><strong>{{localize "DIALOG.TARGET"}}:</strong> {{baseTarget}}</p>
+        
+        {{#if modifier}}
+            <p><strong>{{localize "CHAT.TEST_MODIFIER"}}:</strong> {{modifier}}</p>
+        {{/if}}
+        
+        {{#if isSuccess}}
+            <p><strong>{{localize "CHAT.DOS"}}:</strong> {{dos}}</p>
+        {{else}}
+            <p><strong>{{localize "CHAT.DOF"}}:</strong> {{dof}}</p>
+        {{/if}}
+    </div>
+    
+    <div class="dice-rolls" style="display:none">
+        <div class="dice-roll-render">
+            {{{render}}}
+        </div>
+    </div>
+</div>

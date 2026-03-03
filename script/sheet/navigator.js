@@ -24,7 +24,12 @@ export class NavigatorSheet extends RogueTraderItemSheet {
     return buttons;
   }
 
-  activateListeners(html) {
-    super.activateListeners(html);
+   /**
+   * Обновляет список доступных тестов при изменении типа
+   */
+  _updateTestOptions() {
+    // Эта функция будет вызвана при изменении типа теста
+    // Может потребоваться дополнительная логика в зависимости от ваших нужд
+    console.log("Power test type changed");
   }
 }

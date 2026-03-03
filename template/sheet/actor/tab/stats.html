@@ -1,4 +1,7 @@
 <div class="flex wrap stats">
+<!-- Замените блок custom-counters на этот код -->
+
+<div class="insanities-void-container">
     <div class="insanities border">
         <h1>{{localize "TITLE.INSANITY"}}</h1>
         <div class="flex" style="margin-top: 2px">
@@ -31,6 +34,109 @@
                 {{/each}}
             </div>
         </div>
+    </div>
+    <div class="void border">
+<div class="custom-counters" style="width: 100%; margin-bottom: 5px; overflow: hidden;">
+    <div class="item-list">
+        <div class="flex header">
+            <b class="name">{{localize "TITLE.CUSTOM_COUNTERS"}}</b>
+            <a class="button custom-counter-create">
+                <i class="fas fa-plus"></i>
+            </a>
+        </div>
+        
+        <div class="custom-counters-content" style="padding: 3px 0; max-height: 120px; overflow-y: auto; overflow-x: hidden;">
+            {{#each system.customCounters as |counter key|}}
+                <div class="custom-counter-item flex column" style="
+                    width: 100%;
+                    padding: 4px 6px; 
+                    background: {{counter.color}}; 
+                    border-radius: 4px;
+                    border: 1px solid rgba(0,0,0,0.3);
+                    box-sizing: border-box;
+                    flex: 0 0 auto;
+                    height: 60px;
+                    margin-bottom: 4px;">
+                    
+                    <div class="flex row justify-space-between align-center" style="margin-bottom: 2px; min-height: 16px; width: 100%;">
+                        <input class="counter-name" type="text" name="system.customCounters.{{key}}.name" 
+                               value="{{counter.name}}" placeholder="{{localize 'CUSTOM_COUNTERS.NAME'}}"
+                               style="
+                                 background: transparent; 
+                                 border: none; 
+                                 color: white; 
+                                 width: calc(100% - 20px);
+                                 font-size: 20px;
+                                 padding: 2px 4px;
+                                 line-height: 1.2;" />
+                        <a class="custom-counter-delete" data-counter-key="{{key}}" 
+                           title="{{localize 'CUSTOM_COUNTERS.DELETE'}}" 
+                           style="flex-shrink: 0;">
+                            <i class="fas fa-trash" style="color: white; font-size: 9px;"></i>
+                        </a>
+                    </div>
+                    
+                    <div class="flex row align-center justify-center" style="gap: 4px; margin-bottom: 1px; width: 100%;">
+                        <input type="number" name="system.customCounters.{{key}}.current" 
+                               value="{{counter.current}}" data-dtype="Number"
+                               style="
+                                 margin-top: 2px;
+                                 width: 50px; 
+                                 height: 24px;
+                                 text-align: center; 
+                                 background: rgba(255,255,255,0.15); 
+                                 color: white;
+                                 border: 1px solid rgba(255,255,255,0.3);
+                                 border-radius: 3px;
+                                 font-size: 13px;
+                                 font-weight: bold;" />
+                        
+                        {{#if counter.showMax}}
+                        <span style="color: white; font-weight: bold; font-size: 11px; margin-top: 2px;">/</span>
+                        <input type="number" name="system.customCounters.{{key}}.max" 
+                               value="{{counter.max}}" data-dtype="Number"
+                               style="
+                                 margin-top: 2px;
+                                 width: 50px; 
+                                 height: 24px;
+                                 text-align: center; 
+                                 background: rgba(255,255,255,0.15); 
+                                 color: white;
+                                 border: 1px solid rgba(255,255,255,0.3);
+                                 border-radius: 3px;
+                                 font-size: 13px;
+                                 font-weight: bold;" />
+                        {{/if}}
+                    </div>
+                    
+                    <div class="flex row align-center justify-space-between" style="margin-top: 1px; font-size: 8px; width: 100%; padding: 0 2px;">
+                        <label class="flex row align-center" style="color: rgba(255,255,255,0.8); cursor: pointer;">
+                            <input type="checkbox" name="system.customCounters.{{key}}.showMax" 
+                                   {{#if counter.showMax}}checked{{/if}} 
+                                   style="margin-right: 3px; cursor: pointer; transform: scale(0.7);" />
+                            {{localize "TITLE.CUSTOM_COUNTERS_SHOW_MAX"}}
+                        </label>
+                        <input type="color" name="system.customCounters.{{key}}.color" 
+                               value="{{counter.color}}" title="{{localize 'TITLE.CUSTOM_COUNTERS_COLOR'}}"
+                               style="
+                                 width: 18px; 
+                                 height: 18px; 
+                                 border: none; 
+                                 background: transparent;
+                                 cursor: pointer;" />
+                    </div>
+                </div>
+            {{/each}}
+        </div>
+        
+        {{#unless system.customCounters}}
+            <div class="flex column align-center justify-center" style="width: 100%; padding: 15px; color: #888; font-style: italic; font-size: 12px;">
+                <p>{{localize "CUSTOM_COUNTERS.EMPTY"}}</p>
+            </div>
+        {{/unless}}
+    </div>
+</div>
+    </div>
     </div>
     <div class="characteristics border">
         <h1>{{localize "TITLE.CHARACTERISTICS"}}</h1>
@@ -122,33 +228,36 @@
                 {{/each}}
             </div>
         </div>
-        <div class="flex row" style="flex-basis: 40%">
-            <div class="flex column" style="max-height: 330px;flex-basis: 100%;overflow-y: scroll">
-                {{#each system.skills as |skill key|}}
-                    {{#if skill.isSpecialist}}
-                        <div class="item-list">
-                            <div class="flex header">
-                                <b class="name">{{localize skill.label}}</b>
-                            </div>
-                            <div class="items" style="overflow-y: visible">
-                                {{#each skill.specialities as |speciality keySpe|}}
-                                    {{#if speciality.isKnown}}
-                                        <div class="speciality item flex row" data-skill="{{key}}">
-                                            <div class="name">
-                                                <button class="roll-speciality" data-speciality="{{keySpe}}" type="button">{{localize speciality.label}}</button>
-                                            </div>
-                                            <input class="total" type="number" value="{{speciality.total}}" data-dtype="Number" disabled />
-                                            <div class="information">
-                                                <input type="text" value="{{speciality.advanceSpec}}" disabled />
-                                            </div>
-                                        </div>
-                                    {{/if}}
-                                {{/each}}
-                            </div>
+<div class="flex row" style="flex-basis: 40%">
+    <div class="flex column" style="max-height: 330px;flex-basis: 100%;overflow-y: scroll">
+        {{#each system.skills as |skill key|}}
+            {{#if skill.isSpecialist}}
+                <!-- ДОБАВЛЕНО: Проверка есть ли известные специализации -->
+                {{#if skill.hasKnownSpecialities}}
+                    <div class="item-list">
+                        <div class="flex header">
+                            <b class="name">{{localize skill.label}}</b>
                         </div>
-                    {{/if}}
-                {{/each}}
-            </div>
-        </div>
+                        <div class="items" style="overflow-y: visible">
+                            {{#each skill.specialities as |speciality keySpe|}}
+                                {{#if speciality.isKnown}}
+                                    <div class="speciality item flex row" data-skill="{{key}}">
+                                        <div class="name">
+                                            <button class="roll-speciality" data-speciality="{{keySpe}}" type="button">{{localize speciality.label}}</button>
+                                        </div>
+                                        <input class="total" type="number" value="{{speciality.total}}" data-dtype="Number" disabled />
+                                        <div class="information">
+                                            <input type="text" value="{{speciality.advanceSpec}}" disabled />
+                                        </div>
+                                    </div>
+                                {{/if}}
+                            {{/each}}
+                        </div>
+                    </div>
+                {{/if}}
+            {{/if}}
+        {{/each}}
+    </div>
+</div>
     </div>
 </div>

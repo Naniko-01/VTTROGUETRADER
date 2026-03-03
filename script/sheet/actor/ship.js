@@ -9,7 +9,7 @@ export class ShipSheet extends RogueTraderSheet {
     return mergeObject(super.defaultOptions, {
       classes: ["rogue-trader", "sheet", "actor"],
       template: "systems/rogue-trader/template/sheet/actor/ship.html",
-      width: 775,
+      width: 1100,
       height: 835,
       resizable: true,
       tabs: [

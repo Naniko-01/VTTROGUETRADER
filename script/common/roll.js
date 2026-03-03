@@ -3,6 +3,7 @@
  * @param {object} rollData
  */
 export async function commonRoll(rollData) {
+  applyFatiguePenalty(rollData);
   await _computeTarget(rollData);
   await _rollTarget(rollData);
   await _sendToChat(rollData);
@@ -73,29 +74,192 @@ export async function consumeResourceRoll(rollData) {
  * @param {object} rollData
  */
 export async function combatRoll(rollData) {
-  if (rollData.weaponTraits.skipAttackRoll) {
-    rollData.result = 5; // Attacks that skip the hit roll always hit body; 05 reversed 50 = body
-    // Устанавливаем необходимые данные для отображения в чате
-    rollData.target = rollData.baseTarget; // Добавляем target
-    rollData.showDoS = false; // Скрываем степень успеха
-    rollData.isSuccess = true; // Устанавливаем успех
-    rollData.dos = 0; // Степень успеха
-    rollData.dof = 0; // Степень провала
-    
-    await _rollDamage(rollData);
-    // Without a To Hit Roll we need a substitute otherwise foundry can't render the message
-    rollData.rollObject = rollData.damages[0].damageRoll;
-    
-    // Устанавливаем флаг, что это бросок атаки
+  applyFatiguePenalty(rollData);
+  if (rollData.weaponTraits?.skipAttackRoll) {
+    rollData.result = 5;
+    rollData.target = rollData.baseTarget;
+    rollData.showDoS = false;
+    rollData.isSuccess = true;
+    rollData.dos = 0;
+    rollData.dof = 0;
+    rollData.rollObject = new Roll("0");
+    rollData.rollObject.evaluate({ async: false });
     rollData.isCombatTest = true;
-  } else {
+  } 
+  else {
     await _computeTarget(rollData);
     await _rollTarget(rollData);
-    if (rollData.isSuccess) {
+    // Сохраняем данные о количестве попаданий в rollData
+    if (rollData.isSuccess && rollData.attackType) {
+      _computeHitCount(rollData);
+    }
+  }
+  
+  // Для не-оружия (пси-силы и т.д.) бросаем урон сразу
+  // Для оружия (weapon) урон не бросаем, ждем нажатия кнопки
+  if (rollData.isSuccess && rollData.damageFormula) {
+    // Проверяем, является ли это оружием
+    const actor = game.actors.get(rollData.ownerId);
+    const item = actor?.items?.get(rollData.itemId);
+    const isWeapon = item?.type === "weapon";
+    
+    // Если это не оружие ИЛИ есть флаг skipSeparateDamage, бросаем урон сразу
+    if (!isWeapon || rollData.skipSeparateDamage) {
       await _rollDamage(rollData);
     }
   }
+  if (rollData.isPsychicPower) {
+    rollData.target = rollData.baseTarget + r.total; // или другая логика
+  }
+  
   await _sendToChat(rollData);
+}
+
+/**
+ * Вычисляет количество попаданий на основе DoS и типа атаки
+ */
+function _computeHitCount(rollData) {
+  rollData.numberOfHit = 1; // Всегда минимум 1 попадание
+  
+  // Попадания от режима стрельбы (semi-auto, full-auto и т.д.)
+  if (rollData.attackType?.hitMargin > 0) {
+    let maxAdditionalHit = Math.floor((rollData.dos) / rollData.attackType.hitMargin);
+    
+    if (rollData.weaponTraits?.storm) {
+      maxAdditionalHit *= 2;
+      maxAdditionalHit += 1;
+    }
+    
+    if (typeof rollData.maxAdditionalHit !== "undefined" && maxAdditionalHit > rollData.maxAdditionalHit) {
+      maxAdditionalHit = rollData.maxAdditionalHit;
+    }
+    
+    rollData.numberOfHit = maxAdditionalHit + 1;
+  }
+
+  // Scatter: дополнительные попадания только при стрельбе В УПОР (Point Blank = 30)
+  // Используем нестрогое сравнение, чтобы строка "30" тоже подходила
+  if (rollData.weaponTraits?.scatter && rollData.range == 30) {
+    let scatterHits = Math.floor(rollData.dos / 2);
+    rollData.numberOfHit += scatterHits;
+  }
+}
+/**
+ * Public function to roll damage separately
+ */
+export async function rollDamage(rollData) {
+  // Clear existing damages
+  delete rollData.damages;
+  
+  // Вычисляем количество попаданий, если оно еще не вычислено
+  if (!rollData.numberOfHit && rollData.isSuccess && rollData.attackType) {
+    _computeHitCount(rollData);
+  }
+  
+  if (rollData.damageFormula && rollData.isSuccess) {
+    await _rollDamage(rollData);
+    await _sendDamageToChat(rollData);
+    return true;
+  }
+  return false;
+}
+
+
+/**
+ * Handle rolling and collecting parts of a combat damage roll.
+ * @param {object} rollData
+ */
+async function _rollDamage(rollData) {
+  let formula = "0";
+  rollData.damages = [];
+  if (rollData.damageFormula) {
+    formula = rollData.damageFormula;
+    
+    if (rollData.weaponTraits?.tearing) {
+      formula = _appendTearing(formula);
+    }
+    if (rollData.weaponTraits?.proven) {
+      formula = _appendNumberedDiceModifier(formula, "min", rollData.weaponTraits.proven);
+    }
+    if (rollData.weaponTraits?.primitive) {
+      formula = _appendNumberedDiceModifier(formula, "max", rollData.weaponTraits.primitive);
+    }
+
+    // Устанавливаем флаг удвоения брони для Scatter на дальней или сверхдальней дистанции
+    if (rollData.weaponTraits?.scatter && rollData.range <= -10) {
+      rollData.scatterDoubleArmor = true;
+    }
+
+    formula = `${formula}+${rollData.damageBonus}`;
+    formula = _replaceSymbols(formula, rollData);
+  }
+  let penetration = _rollPenetration(rollData);
+  
+  // Если scatterDoubleArmor, уменьшаем пробитие вдвое (броня цели удваивается)
+  if (rollData.scatterDoubleArmor) {
+    penetration = Math.floor(penetration / 2);
+  }
+
+  // Генерируем первое попадание
+  let firstHit = await _computeDamage(formula, penetration, rollData);
+  if (firstHit.total !== 0) {
+    const firstLocation = _getLocation(rollData.result);
+    firstHit.location = firstLocation;
+    firstHit.hasLocation = true;
+    rollData.damages.push(firstHit);
+    
+    // Генерируем дополнительные попадания на основе numberOfHit
+    if (rollData.numberOfHit > 1) {
+      for (let i = 1; i < rollData.numberOfHit; i++) {
+        let additionalHit = await _generateNextHit(formula, penetration, rollData, firstLocation, i - 1);
+        rollData.damages.push(additionalHit);
+      }
+    }
+    
+    // Применяем бонусы от DoS к минимальному урону
+    let minDamage = rollData.damages.reduce(
+      (min, damage) => min.minDice < damage.minDice ? min : damage, rollData.damages[0]
+    );
+    if (minDamage.minDice < rollData.dos) {
+      minDamage.total += (rollData.dos - minDamage.minDice);
+    }
+  }
+}
+/**
+ * Post rolled damage to chat.
+ * @param {object} rollData
+ */
+async function _sendDamageToChat(rollData) {
+  let speaker = ChatMessage.getSpeaker();
+  let chatData = {
+    user: game.user.id,
+    type: CONST.CHAT_MESSAGE_TYPES.ROLL,
+    rollMode: game.settings.get("core", "rollMode"),
+    speaker: speaker,
+    flags: {
+      "rogue-trader.rollData": rollData
+    }
+  };
+
+  if (speaker.token) {
+    rollData.tokenId = speaker.token;
+  }
+
+  // Добавляем броски в chatData
+  if (rollData.damages) {
+    chatData.rolls = rollData.damages.map(d => d.damageRoll || d.rollObject).filter(r => r);
+  }
+
+  const html = await renderTemplate("systems/rogue-trader/template/chat/damage.html", rollData);
+  chatData.content = html;
+
+  if (["gmroll", "blindroll"].includes(chatData.rollMode)) {
+    chatData.whisper = ChatMessage.getWhisperRecipients("GM");
+  } else if (chatData.rollMode === "selfroll") {
+    chatData.whisper = [game.user];
+  }
+
+  ChatMessage.create(chatData);
 }
 
 /**
@@ -192,9 +356,6 @@ async function _computeTarget(rollData) {
     }
     psyModifier = rollData.psy.value * 5;
   }
-  if (rollData.weaponTraits?.scatter && range > 0) {
-    rollData.modifier += 10;
-  }
   let aim = rollData.aim?.val ? rollData.aim.val : 0;
   const formula = `0 + ${rollData.modifier} + ${aim} + ${range} + ${attackType} + ${psyModifier}`;
   let r = new Roll(formula, {});
@@ -208,6 +369,19 @@ async function _computeTarget(rollData) {
   }
   rollData.rollObject = r;
 }
+/**
+ * Применяет штраф усталости (-10) к модификатору броска, если у актора есть усталость.
+ * @param {object} rollData
+ */
+function applyFatiguePenalty(rollData) {
+    if (!rollData.ownerId) return;
+    const actor = game.actors.get(rollData.ownerId);
+    if (!actor) return;
+    const fatigue = actor.system.fatigue;
+    if (fatigue && fatigue.value > 0) {
+        rollData.modifier = (rollData.modifier || 0) - 10;
+    }
+}
 
 async function _rollForceField(rollData) {
   let r = new Roll("1d100", {});
@@ -218,7 +392,14 @@ async function _rollForceField(rollData) {
   rollData.isSuccess = rollData.result <= rollData.protectionRating;
   rollData.isOverload = rollData.result <= rollData.overloadChance;
 }
-
+function _getFatiguePenalty(rollData) {
+    if (!rollData.ownerId) return 0;
+    const actor = game.actors.get(rollData.ownerId);
+    if (actor && actor.fatigue?.value > 0) {
+        return -10;
+    }
+    return 0;
+}
 /**
  * Roll a d100 against a target, and apply the result to the rollData.
  * @param {object} rollData
@@ -240,73 +421,8 @@ async function _rollTarget(rollData) {
   if (typeof rollData.psy !== "undefined") _computePsychicPhenomena(rollData);
 }
 
-function _getUnnaturalDoS(unnatural)
-{
-  if (unnatural)
-    return Math.ceil(unnatural / 2);
-  else 
-    return 0;
-}
-
-
-
-
-/**
- * Handle rolling and collecting parts of a combat damage roll.
- * @param {object} rollData
- */
-async function _rollDamage(rollData) {
-  let formula = "0";
-  rollData.damages = [];
-  if (rollData.damageFormula) {
-    formula = rollData.damageFormula;
-    if (rollData.weaponTraits?.scatter) {
-      formula = _appendScatter(formula, rollData.range);
-    }
-    if (rollData.weaponTraits?.tearing) {
-      formula = _appendTearing(formula);
-    }
-    if (rollData.weaponTraits?.proven) {
-      formula = _appendNumberedDiceModifier(formula, "min", rollData.weaponTraits.proven);
-    }
-    if (rollData.weaponTraits?.primitive) {
-      formula = _appendNumberedDiceModifier(formula, "max", rollData.weaponTraits.primitive);
-    }
-
-    formula = `${formula}+${rollData.damageBonus}`;
-    formula = _replaceSymbols(formula, rollData);
-  }
-  let penetration = _rollPenetration(rollData);
-  let firstHit = await _computeDamage(formula, penetration, rollData);
-  if (firstHit.total !== 0) {
-    const firstLocation = _getLocation(rollData.result);
-    firstHit.location = firstLocation;
-    firstHit.hasLocation = true
-    rollData.damages.push(firstHit);
-    if (rollData.attackType?.hitMargin > 0) {
-      let maxAdditionalHit = Math.floor((rollData.dos) / rollData.attackType.hitMargin);
-      if (rollData.weaponTraits.storm) {
-        maxAdditionalHit *= 2;
-        maxAdditionalHit += 1;
-      }
-      if (typeof rollData.maxAdditionalHit !== "undefined" && maxAdditionalHit > rollData.maxAdditionalHit) {
-        maxAdditionalHit = rollData.maxAdditionalHit;
-      }
-      rollData.numberOfHit = maxAdditionalHit + 1;
-      for (let i = 0; i < maxAdditionalHit; i++) {
-        let additionalHit = await _generateNextHit(formula, penetration, rollData, firstLocation, i);
-        rollData.damages.push(additionalHit);
-      }
-    } else {
-      rollData.numberOfHit = 1;
-    }
-    let minDamage = rollData.damages.reduce(
-      (min, damage) => min.minDice < damage.minDice ? min : damage, rollData.damages[0]
-    );
-    if (minDamage.minDice < rollData.dos) {
-      minDamage.total += (rollData.dos - minDamage.minDice);
-    }
-  }
+function _getUnnaturalDoS(unnatural) {
+    return unnatural || 0;   // если unnatural=0 (нет особенности) – возвращаем 0
 }
 
 async function _generateNextHit(damageFormula, armorPen, rollData, firstHitLocation, hitIndex) {
@@ -339,20 +455,20 @@ async function _computeDamage(damageFormula, penetration, rollData) {
     damageRender: await r.render()
   };
 
-  if (weaponTraits?.accurate && isAiming) {
+if (weaponTraits?.accurate && isAiming && rollData.attackType?.name === "standard" && rollData.weaponClass === "basic") {
     let numDice = ~~((dos - 1) / 2); //-1 because each degree after the first counts
     if (numDice >= 1) {
-      if (numDice > 2) numDice = 2;
-      let ar = new Roll(`${numDice}d10`);
-      ar.evaluate({ async: false });
-      damage.total += ar.total;
-      ar.terms.flatMap(term => term.results).forEach(async die => {
-        if (die.active && die.result < dos) damage.dices.push(die.result);
-        if (die.active && (typeof damage.minDice === "undefined" || die.result < damage.minDice)) damage.minDice = die.result;
-      });
-      damage.accurateRender = await ar.render();
+        if (numDice > 2) numDice = 2;
+        let ar = new Roll(`${numDice}d10`);
+        ar.evaluate({ async: false });
+        damage.total += ar.total;
+        ar.terms.flatMap(term => term.results).forEach(async die => {
+            if (die.active && die.result < dos) damage.dices.push(die.result);
+            if (die.active && (typeof damage.minDice === "undefined" || die.result < damage.minDice)) damage.minDice = die.result;
+        });
+        damage.accurateRender = await ar.render();
     }
-  }
+}
 
   // Without a To Hit we a roll to associate the chat message with
   if (weaponTraits?.skipAttackRoll) {
@@ -492,7 +608,7 @@ function _computeRateOfFire(rollData) {
 
   switch (rollData.attackType.name) {
     case "standard":
-      rollData.attackType.modifier = 10;
+      rollData.attackType.modifier = 0;
       break;
     case "bolt":
     case "blast":
@@ -501,7 +617,7 @@ function _computeRateOfFire(rollData) {
       break;
 
     case "semi_auto":
-      rollData.attackType.modifier = 0;
+      rollData.attackType.modifier = rollData.moved ? 0 : 10;
       rollData.attackType.hitMargin = 2;
       rollData.maxAdditionalHit = rollData.rateOfFire.burst - 1;
       break;
@@ -509,20 +625,20 @@ function _computeRateOfFire(rollData) {
     case "swift":
     case "barrage":
       rollData.attackType.modifier = 0;
-      rollData.attackType.hitMargin = 2;
-      rollData.maxAdditionalHit = rollData.rateOfFire.burst - 1;
+      rollData.attackType.hitMargin = 0;
+      rollData.maxAdditionalHit = 0;
       break;
 
     case "full_auto":
-      rollData.attackType.modifier = -10;
+      rollData.attackType.modifier = rollData.moved ? -10 : 20;
       rollData.attackType.hitMargin = 1;
       rollData.maxAdditionalHit = rollData.rateOfFire.full - 1;
       break;
 
     case "lightning":
-      rollData.attackType.modifier = -10;
-      rollData.attackType.hitMargin = 1;
-      rollData.maxAdditionalHit = rollData.rateOfFire.full - 1;
+      rollData.attackType.modifier = 0;
+      rollData.attackType.hitMargin = 0;
+      rollData.maxAdditionalHit = 0;
       break;
 
     case "storm":
@@ -537,22 +653,20 @@ function _computeRateOfFire(rollData) {
       break;
 
     case "charge":
-      rollData.attackType.modifier = 20;
+      rollData.attackType.modifier = 10;
       rollData.attackType.hitMargin = 0;
       break;
 
     case "allOut":
-      rollData.attackType.modifier = 30;
+      rollData.attackType.modifier = 20;
       rollData.attackType.hitMargin = 0;
       break;
     
     case "Macrobattery":
-      // rollData.attackType.modifier = 10;
       rollData.attackType.hitMargin = rollData.dosPerHit ?? 1;
       rollData.maxAdditionalHit = rollData.weaponStrength - 1;
       break;
     case "Lance":
-      // rollData.attackType.modifier = 20;
       rollData.attackType.hitMargin = rollData.dosPerHit ?? 3;
       rollData.maxAdditionalHit = rollData.weaponStrength - 1;
       break;
@@ -672,16 +786,6 @@ function _appendTearing(formula) {
     let faces = parseInt(match[1]);
     let diceTerm = `${numDice}d${faces}dl`;
     formula = formula.replace(diceRegex, diceTerm);
-  }
-  return formula;
-}
-
-function _appendScatter(formula, range) {
-  if (range >= 30) {
-    formula = formula + "+2";
-  }
-  else if (range < 0) {
-    formula = formula + "-3";
   }
   return formula;
 }

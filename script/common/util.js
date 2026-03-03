@@ -82,7 +82,7 @@ export default class RogueTraderUtil {
     };
   }
   
-  static createWeaponRollData(actor, weapon) {
+static createWeaponRollData(actor, weapon) {
     let characteristic = this.getWeaponCharacteristic(actor, weapon);
     let rateOfFire;
     if (weapon.class === "melee") {
@@ -93,24 +93,52 @@ export default class RogueTraderUtil {
     let isMelee = weapon.class === "melee";
     
     let rollData = this.createCommonAttackRollData(actor, weapon);
-    rollData.baseTarget= characteristic.total + weapon.attack,
+    rollData.baseTarget = characteristic.total + weapon.attack;
     rollData.unnatural = characteristic.unnatural;
-    rollData.modifier= 0,
-    rollData.isMelee= isMelee;
-    rollData.isRange= !isMelee;
-    rollData.clip= weapon.clip;
-    rollData.rateOfFire= rateOfFire;
+    rollData.modifier = 0;
+    rollData.weaponClass = weapon.system.class;
+    rollData.isMelee = isMelee;
+    rollData.isRange = !isMelee;
+    rollData.clip = weapon.clip;
+    rollData.rateOfFire = rateOfFire;
     rollData.weaponSpecial = weapon.special;
     rollData.weaponTraits = this.extractWeaponTraits(weapon.special);  
-    rollData.damageFormula = weapon.damage + (isMelee && !weapon.damage.match(/SB/gi) ? "+SB" : "") + (rollData.weaponTraits.force ? "+PR" : "");
+    
+    // ---- ИЗМЕНЁННЫЙ БЛОК ФОРМИРОВАНИЯ УРОНА ----
+    let damageFormula = weapon.damage;
+    if (isMelee) {
+        // Если есть свойство Harlequin's Kiss – НЕ добавляем SB вообще
+        if (rollData.weaponTraits.harlequinsKiss) {
+            // Ничего не добавляем, даже если в формуле нет SB
+        }
+        // Иначе, если есть Power Fist – добавляем удвоенный SB
+        else if (rollData.weaponTraits.powerFist) {
+            if (!weapon.damage.match(/SB/gi)) {
+                damageFormula += "+2*SB";
+            }
+        }
+        // Обычное поведение: добавляем +SB, если его нет в формуле
+        else {
+            if (!weapon.damage.match(/SB/gi)) {
+                damageFormula += "+SB";
+            }
+        }
+    }
+    if (rollData.weaponTraits.force) {
+        damageFormula += "+PR";
+    }
+    rollData.damageFormula = damageFormula;
+    // ---------------------------------------------
+    
     if (rollData.weaponTraits.warp)
-      rollData.penetrationFormula = "Ignores armor.";
+        rollData.penetrationFormula = "Ignores armor.";
     else
-      rollData.penetrationFormula = parseInt(weapon.penetration, 10) + parseInt(rollData.weaponTraits.force ? actor.psy.rating : 0, 10);  
-    rollData.special= weapon.special;
-    rollData.psy= { value: actor.psy.rating, display: false};
+        rollData.penetrationFormula = parseInt(weapon.penetration, 10) + parseInt(rollData.weaponTraits.force ? actor.psy.rating : 0, 10);  
+    
+    rollData.special = weapon.special;
+    rollData.psy = { value: actor.psy.rating, display: false };
     return rollData;
-  }
+}
 
   static createForceFieldRollData(actor, forceField) {
     let rollData = {
@@ -192,6 +220,8 @@ export default class RogueTraderUtil {
       melta: this.hasNamedTrait(/Melta/gi, traits),
       maximal: this.hasNamedTrait(/Maximal/gi, traits),
       storm: this.hasNamedTrait(/Storm/gi, traits),
+      powerFist: this.hasNamedTrait(/Power\s*Fist/gi, traits),
+      harlequinsKiss: this.hasNamedTrait(/Harlequin'?s\s*Kiss/gi, traits),
     };
   }
 
@@ -238,6 +268,7 @@ export default class RogueTraderUtil {
       return actor.characteristics.willpower;
     }
   }
+  
     
 }
 

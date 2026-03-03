@@ -49,13 +49,71 @@ export class RogueTraderActor extends Actor {
       this._computeSkills();
       this._computeItems();
       this._computeExperience();
+      this._computeProfitFactorForCharacter();
+      if (!this.system.relations) {
+            this.system.relations = {
+                factions: {},
+                trade: {}
+            };
+        }
+            for (const key in this.system.relations.trade) {
+            const trade = this.system.relations.trade[key];
+            if (trade && typeof trade === 'object') {
+                // Инициализируем trader, если не установлен
+                if (trade.trader === undefined) {
+                    trade.trader = "trade";
+                }
+                // Инициализируем rep, если не установлен
+                if (trade.rep === undefined) {
+                    trade.rep = "neutral";
+                }
+            }
+        }
+      if (!this.system.reputationNotes) {
+            this.system.reputationNotes = "";
+        }
+      if (!this.system.customCounters) {
+        this.system.customCounters = {};
+    }
+    
+    // Вычисляем значения счетчиков если они есть
+        if (this.system.customCounters) {
+          for (const key in this.system.customCounters) {
+              const counter = this.system.customCounters[key];
+              if (counter && typeof counter === 'object') {
+                  // Устанавливаем значения по умолчанию
+                  if (counter.current === undefined) counter.current = 0;
+                  if (counter.max === undefined) counter.max = 0;
+                  if (counter.showMax === undefined) counter.showMax = false;
+                  if (counter.color === undefined) counter.color = "#7a1404";
+                  if (counter.name === undefined) counter.name = "Counter";
+              }
+          }
+      }
       if (this.type === 'explorer') {
         this._computeRank();
       }
       this._computeArmour();
+      this._applyHeavyArmourPenalty(); 
       this._computeMovement();
     }
   }
+ 
+
+  _computeProfitFactorForCharacter() {
+    const pfChar = this.characteristics.ProfitFactor;
+    if (!pfChar) return;
+    
+    // Рассчитываем тотальное значение (base + advance + модификаторы)
+    const characteristicBonuses = this._getCharacteristicsBonuses("ProfitFactor");
+    pfChar.total = pfChar.base + pfChar.advance + characteristicBonuses.characteristicModifier;
+    
+    // Рассчитываем бонус (floor(total/10) + unnatural + модификаторы)
+    pfChar.bonus = Math.floor(pfChar.total / 10) + pfChar.unnatural + characteristicBonuses.unnaturalModifier;
+        
+    // Устанавливаем advanceCharacteristic для отображения
+    pfChar.advanceCharacteristic = this._getAdvanceCharacteristic(pfChar.advance);
+    }
 
   _computeProfitFactor() {
     const colonySize = this.currentColonySize || 0;
@@ -69,6 +127,7 @@ export class RogueTraderActor extends Actor {
     } else {
       this.system.stats.profitFactor = 18 + ((colonySize - 10) * 2) + conserveResourcesPenalty;
     }
+     this.system.stats.profitFactorBonus = Math.floor(this.system.stats.profitFactor / 10);
   }
 
   _computeColonyResources() {
@@ -233,61 +292,135 @@ export class RogueTraderActor extends Actor {
       bonus: this.system.detection / 10
     };
   }
+_getCharacteristicContext() {
+    const chars = this.characteristics;
+    return {
+        WS: chars.weaponSkill?.total || 0,
+        WSB: chars.weaponSkill?.bonus || 0,
+        BS: chars.ballisticSkill?.total || 0,
+        BSB: chars.ballisticSkill?.bonus || 0,
+        S: chars.strength?.total || 0,
+        SB: chars.strength?.bonus || 0,
+        T: chars.toughness?.total || 0,
+        TB: chars.toughness?.bonus || 0,
+        Ag: chars.agility?.total || 0,
+        AgB: chars.agility?.bonus || 0,
+        Int: chars.intelligence?.total || 0,
+        IntB: chars.intelligence?.bonus || 0,
+        Per: chars.perception?.total || 0,
+        PerB: chars.perception?.bonus || 0,
+        WP: chars.willpower?.total || 0,
+        WPB: chars.willpower?.bonus || 0,
+        Fel: chars.fellowship?.total || 0,
+        FelB: chars.fellowship?.bonus || 0,
+    };
+}
 
-  _computeCharacteristics() {
+_evaluateFormula(formula, context) {
+    if (!formula || typeof formula !== 'string') return 0;
+
+    // Приводим формулу к верхнему регистру для унификации
+    let upperFormula = formula.toUpperCase();
+    
+    // Создаём контекст с ключами в верхнем регистре
+    const upperContext = {};
+    for (let [key, value] of Object.entries(context)) {
+        upperContext[key.toUpperCase()] = value;
+    }
+
+    // Заменяем имена характеристик (сначала более длинные, чтобы избежать частичных совпадений)
+    const keys = Object.keys(upperContext).sort((a, b) => b.length - a.length);
+    for (let key of keys) {
+        // Создаём регулярное выражение для точного совпадения слова (границы слова)
+        const regex = new RegExp('\\b' + key + '\\b', 'g');
+        upperFormula = upperFormula.replace(regex, upperContext[key]);
+    }
+
+    // Убираем пробелы
+    upperFormula = upperFormula.replace(/\s/g, '');
+
+    // Проверка на безопасные символы (только цифры, операторы, скобки, точка)
+    if (!/^[0-9+\-*/().]+$/.test(upperFormula)) {
+        console.warn(`Invalid formula expression: ${formula} -> ${upperFormula}`);
+        return 0;
+    }
+
+    try {
+        const result = new Function('return ' + upperFormula)();
+        return Number.isFinite(result) ? result : 0;
+    } catch (e) {
+        console.warn(`Error evaluating formula ${formula}:`, e);
+        return 0;
+    }
+}
+
+getCharacteristicMultiplier(key) {
+    const characteristic = this.characteristics?.[key];
+    if (!characteristic) return 0;
+    // Возвращаем количество дополнительных степеней успеха (0 если множитель ≤ 1)
+    // Важно: не включаем unnaturalModifier из предметов!
+    return characteristic.unnatural > 1 ? characteristic.unnatural : 0;
+}
+
+_computeCharacteristics() {
     let middle = Object.values(this.characteristics).length / 2;
     let i = 0;
     for (const key in this.characteristics) {
-      const characteristic = this.characteristics[key];
-      const characteristicBonuses = this._getCharacteristicsBonuses(key);
-      characteristic.total = characteristic.base + characteristic.advance + characteristicBonuses.characteristicModifier;
-      characteristic.bonus = Math.floor(characteristic.total / 10) + characteristic.unnatural + characteristicBonuses.unnaturalModifier;
-      if (this.fatigue.value > characteristic.bonus) {
-        characteristic.total = Math.ceil(characteristic.total / 2);
-        characteristic.bonus = Math.floor(characteristic.total / 10) + characteristic.unnatural + characteristicBonuses.unnaturalModifier;
-      }
-      characteristic.isLeft = i < middle;
-      characteristic.isRight = i >= middle;
-      characteristic.advanceCharacteristic = this._getAdvanceCharacteristic(characteristic.advance);
-      i++;
-    };
+        const characteristic = this.characteristics[key];
+        const characteristicBonuses = this._getCharacteristicsBonuses(key);
+
+        // 1. Вычисляем total (сумма базы, продвижения и модификаторов от предметов)
+        characteristic.total = characteristic.base + characteristic.advance + characteristicBonuses.characteristicModifier;
+
+        // 2. Определяем множитель Unnatural (минимум 1, так как если нет особенности, он не должен уменьшать)
+        const multiplier = characteristic.unnatural > 1 ? characteristic.unnatural : 1;
+
+        // 3. Вычисляем бонус: (total / 10) * множитель + бонус от предметов (unnaturalModifier)
+        //    unnaturalModifier теперь добавляется как плоский бонус к итоговому бонусу
+        characteristic.bonus = Math.floor(characteristic.total / 10) * multiplier + characteristicBonuses.unnaturalModifier;
+
+        // 5. Флаги для отображения (левая/правая колонка)
+        characteristic.isLeft = i < middle;
+        characteristic.isRight = i >= middle;
+
+        // 6. Строковое обозначение продвижения (для отображения)
+        characteristic.advanceCharacteristic = this._getAdvanceCharacteristic(characteristic.advance);
+
+        i++;
+    }
+
+    // Вычисляем дополнительные значения, зависящие от характеристик
     this.system.insanityBonus = Math.floor(this.insanity / 10);
     this.system.corruptionBonus = Math.floor(this.corruption / 10);
     this.psy.currentRating = this.psy.rating - this.psy.sustained;
     this.initiative.bonus = this.characteristics[this.initiative.characteristic].bonus;
-    // Done as variables to make it easier to read & understand
-    let tb = Math.floor(
-      (this.characteristics.toughness.base
-        + this.characteristics.toughness.advance) / 10);
 
-    let wb = Math.floor(
-      (this.characteristics.willpower.base
-        + this.characteristics.willpower.advance) / 10);
+    // Вычисляем максимум усталости (как было раньше)
+    this.fatigue.max = this.characteristics.toughness.bonus;
+}
 
-    // The only thing not affected by itself
-    this.fatigue.max = tb + wb;
-
-  }
-
-  _getCharacteristicsBonuses(characteristic) {
+_getCharacteristicsBonuses(characteristic) {
     const items = this.items;
-    const result = {
-      characteristicModifier: 0,
-      unnaturalModifier: 0,
-    };
-    items.forEach((value, key) => {
-      const charMods = value.characteristicModifiers;
-      if (charMods !== null && charMods !== undefined) {
-        if (charMods.hasOwnProperty(characteristic)) {
-          const mod = charMods[characteristic];
-          result.characteristicModifier += mod.characteristicModifier;
-          result.unnaturalModifier += mod.unnaturalModifier;
+    const result = { characteristicModifier: 0, unnaturalModifier: 0 };
+    items.forEach(item => {
+        const charMods = item.characteristicModifiers;
+        if (charMods && charMods.hasOwnProperty(characteristic)) {
+            const mod = charMods[characteristic];
+            let charValue = mod.characteristicModifier;
+            if (typeof charValue === 'string') {
+                const num = Number(charValue);
+                if (!isNaN(num) && /^[-+]?\d*\.?\d+$/.test(charValue)) {
+                    charValue = num;
+                } else {
+                    charValue = this._evaluateFormula(charValue, this._getCharacteristicContext());
+                }
+            }
+            result.characteristicModifier += charValue;
+            result.unnaturalModifier += mod.unnaturalModifier || 0;
         }
-      }
     });
-    console.log(`Modifier ${characteristic}: ${JSON.stringify(result)}`);
     return result;
-  }
+}
 
 _computeSkills() {
     const skillMods = this._getSkillBonuses();
@@ -296,6 +429,8 @@ _computeSkills() {
         let short = skill.characteristics[0];
         let characteristic = this._findCharacteristic(short);
         const skillMod = skillMods[key];
+        
+        if (!skillMod) continue;
         
         // Расчет для основного скилла
         if (skill.advance === -20) {
@@ -308,10 +443,15 @@ _computeSkills() {
         
         skill.advanceSkill = this._getAdvanceSkill(skill.advance);
         
+        // ДОБАВЛЕНО: Флаг для проверки, есть ли известные специализации
+        skill.hasKnownSpecialities = false;
+        
         if (skill.isSpecialist) {
-            for (const specKey of Object.keys(skill.specialities)) {
+            for (const specKey of Object.keys(skill.specialities || {})) {
                 const speciality = skill.specialities[specKey];
                 const specMod = skillMods[key][specKey];
+                
+                if (!specMod) continue;
                 
                 // Расчет для специализации
                 if (speciality.advance === -20) {
@@ -325,56 +465,136 @@ _computeSkills() {
                 // Показывать специализации если они хотя бы на уровне Base (-10) или выше
                 speciality.isKnown = speciality.advance >= -10;
                 
+                // ДОБАВЛЕНО: Обновляем флаг, если найдена хотя бы одна известная специализация
+                if (speciality.isKnown) {
+                    skill.hasKnownSpecialities = true;
+                }
+                
                 speciality.advanceSpec = this._getAdvanceSkill(speciality.advance);
+                
+                // Убедимся, что isCustom установлен для кастомных специализаций
+                if (specKey.startsWith('custom_') && speciality.isCustom === undefined) {
+                    speciality.isCustom = true;
+                }
             }
         }
     }
 }
 
-  _getSkillBonuses() {
-    const skillSchema = game.system.model.Actor.explorer.skills;
-    const result = {};
-    for (const entry in skillSchema) {
-      if (skillSchema.hasOwnProperty(entry)) {
-        const entryObject = skillSchema[entry];
-        if (entryObject.isSpecialist) {
-          result[entry] = {};
-          const specialities = skillSchema[entry].specialities;
-          for (const specialty in specialities) {
-            if (specialities.hasOwnProperty(specialty)) {
-              result[entry][specialty] = {
-                skillModifier: 0
-              };
-            }
-          }
-        } else {
-          result[entry] = {
-            skillModifier: 0
-          };
-        }
+  /**
+   * Применяет штраф -30 к навыкам Concelament и silentMove,
+   * если хотя бы на одной локации суммарная броня от предметов > 7.
+   */
+  _applyHeavyArmourPenalty() {
+    const armourLocations = ['head', 'leftArm', 'rightArm', 'body', 'leftLeg', 'rightLeg'];
+    const hasHeavyArmour = armourLocations.some(loc => (this.armour[loc]?.value || 0) > 7);
+
+    if (hasHeavyArmour) {
+      // Concelament (внимание: в template.json ключ именно "Concelament" с большой буквы)
+      if (this.skills?.Concelament) {
+        this.skills.Concelament.total -= 30;
+      }
+      // silentMove
+      if (this.skills?.silentMove) {
+        this.skills.silentMove.total -= 30;
       }
     }
-    const items = this.items;
-    items.forEach((value, key) => {
-      const skillMods = value.skillModifiers;
-      if (skillMods !== null && skillMods !== undefined) {
-        for (const skillMod in skillMods) {
-          const split = skillMod.split(":");
-          if (split.length > 1)
-            result[split[0]][split[1]].skillModifier += skillMods[skillMod].skillModifier;
-          else
-            result[split[0]].skillModifier += skillMods[skillMod].skillModifier;
-        }
-      }
-    });
-    console.log(result);
-    return result;
   }
+// В методе _getSkillBonuses в actor.js
+_getSkillBonuses() {
+    const skillSchema = game.system.model.Actor.explorer.skills;
+    const result = {};
+
+    // 1. Инициализируем структуру из шаблона
+    for (const entry in skillSchema) {
+        if (skillSchema.hasOwnProperty(entry)) {
+            const entryObject = skillSchema[entry];
+            if (entryObject.isSpecialist) {
+                result[entry] = {};
+                const specialities = skillSchema[entry].specialities || {};
+                for (const specialty in specialities) {
+                    if (specialities.hasOwnProperty(specialty)) {
+                        result[entry][specialty] = { skillModifier: 0 };
+                    }
+                }
+            } else {
+                result[entry] = { skillModifier: 0 };
+            }
+        }
+    }
+
+    // 2. Добавляем кастомные специализации из данных актора
+    const actorSkills = this.system.skills || {};
+    for (const skillKey in actorSkills) {
+        const skill = actorSkills[skillKey];
+        if (!result[skillKey]) {
+            result[skillKey] = skill.isSpecialist ? {} : { skillModifier: 0 };
+        }
+        if (skill.isSpecialist && skill.specialities) {
+            for (const specKey in skill.specialities) {
+                if (!result[skillKey][specKey]) {
+                    result[skillKey][specKey] = { skillModifier: 0 };
+                }
+            }
+        }
+    }
+
+    // 3. Применяем модификаторы из предметов
+    const items = this.items;
+    items.forEach(item => {
+        const skillMods = item.skillModifiers;
+        if (!skillMods) return;
+
+        for (const skillMod in skillMods) {
+            const split = skillMod.split(":");
+            let target = null;
+            let isSpeciality = split.length > 1;
+
+            if (isSpeciality) {
+                // специализация: split[0] – навык, split[1] – специализация
+                if (result[split[0]] && result[split[0]][split[1]]) {
+                    target = result[split[0]][split[1]];
+                }
+            } else {
+                // обычный навык
+                if (result[split[0]]) {
+                    target = result[split[0]];
+                }
+            }
+            if (!target) continue;
+
+            // Получаем значение модификатора (может быть числом или строкой-формулой)
+            let rawValue = skillMods[skillMod].skillModifier;
+            let numericValue = 0;
+
+            if (typeof rawValue === 'number') {
+                numericValue = rawValue;
+            } else if (typeof rawValue === 'string') {
+                // Пробуем распарсить как число
+                const asNumber = Number(rawValue);
+                if (!isNaN(asNumber) && /^[-+]?\d*\.?\d+$/.test(rawValue)) {
+                    numericValue = asNumber;
+                } else {
+                    // Вычисляем формулу
+                    numericValue = this._evaluateFormula(rawValue, this._getCharacteristicContext());
+                }
+            }
+
+            // Добавляем к накопленному значению
+            target.skillModifier += numericValue;
+        }
+    });
+
+    return result;
+}
 
   _computeItems() {
     let encumbrance = 0;
     for (let item of this.items) {
-
+      // Силовая броня, если надета, не учитывается в весе
+      if (item.type === "armour" && item.system.type === "power" && item.system.equipped) {
+        continue; // пропускаем такой предмет
+      }
       if (item.weight) {
         encumbrance = encumbrance + item.weight;
       }
@@ -466,14 +686,13 @@ _computeSkills() {
             }
           }), {});
 
-    // Object for storing the max armour
     let maxArmour = locations
       .reduce((acc, location) =>
         Object.assign(acc, { [location]: 0 }), {});
 
-    // For each item, find the maximum armour val per location
+    // Обычная (неаддитивная) броня — берём максимальное значение среди надетых
     this.items
-      .filter(item => item.isArmour && !item.isAdditive)
+      .filter(item => item.isArmour && !item.isAdditive && item.system.equipped)   // <-- добавлено условие
       .reduce((acc, armour) => {
         locations.forEach(location => {
           let armourVal = armour.part[location] || 0;
@@ -484,8 +703,9 @@ _computeSkills() {
         return acc;
       }, maxArmour);
 
+    // Аддитивная броня — суммируем все надетые
     this.items
-      .filter(item => item.isArmour && item.isAdditive)
+      .filter(item => item.isArmour && item.isAdditive && item.system.equipped)     // <-- добавлено условие
       .forEach(armour => {
         locations.forEach(location => {
           let armourVal = armour.part[location] || 0;

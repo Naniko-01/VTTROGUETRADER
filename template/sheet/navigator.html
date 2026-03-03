@@ -10,15 +10,26 @@
                     <input name="name" type="text" value="{{item.name}}" />
                 </div>
                 <div class="name header-row">
-                    <label>{{localize "TITLE.NA"}}</label>
+                    <label>{{localize "TITLE.NA"}}:</label>
                     <select name="system.skillLevel" type="text" value="{{system.skillLevel}}">
                         {{#select system.skillLevel}}
-                            <option value="Послушник">{{localize "TITLE.NOVICE"}}</option>
-                            <option value="Адепт">{{localize "TITLE.ADEPT"}}</option>
-                            <option value="Мастер">{{localize "TITLE.MASTER"}}</option>
+                            <option value="novice">{{localize "TITLE.NOVICE"}}</option>
+                            <option value="adept">{{localize "TITLE.ADEPT"}}</option>
+                            <option value="master">{{localize "TITLE.MASTER"}}</option>
                         {{/select}}
                     </select>
                 </div>
+                    <div class="name header-row">
+                        <label>{{localize "TITLE.POWERTEST"}}:</label>
+                        <input class="navigator-difficulty" name="system.navigatorPower.difficulty" type="number" value="{{system.navigatorPower.difficulty}}" data-dtype="Number" />
+                        <select name="system.navigatortest" type="text" value="{{system.navigatortest}}">
+                            {{#select system.navigatortest}}
+                                <option value="willpower">{{localize "TITLE.NAVI_WP"}}</option>
+                                <option value="perception">{{localize "TITLE.NAVI_PER"}}</option>
+                                <option value="nan">{{localize "TITLE.NAVI_NAN"}}</option>
+                            {{/select}}
+                        </select>
+                    </div>
             </div>
         </div>
     </div>

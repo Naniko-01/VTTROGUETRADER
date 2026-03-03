@@ -830,11 +830,6 @@
               "label": "SKILL.UNDERDECK",
               "advance": -20,
               "cost": 0
-            },
-            "rogueTraderMaTT": {
-              "label": "SKILL.ROGUE-TRADERS_MATT",
-              "advance": -20,
-              "cost": 0
             }
           }
           },
@@ -1084,7 +1079,11 @@
       "insanity": 0,
       "corruption": 0,
       "aptitudes": {},
-      "size": 4
+      "size": 4,
+      "relations": {
+    "factions": {},
+    "trade": {}
+    }
     },
     "npc": {
       "templates": [
@@ -1288,6 +1287,7 @@
       "templates": [ "equipment", "modifiers" ],
       "type": "basic",
       "isAdditive": false,
+      "equipped": false, 
       "part": {
         "head": 0,
         "leftArm": 0,
@@ -1295,8 +1295,7 @@
         "body": 0,
         "leftLeg": 0,
         "rightLeg": 0
-      },
-      "maxAgility": 0
+      }
     },
     "criticalInjury": {
       "templates": [ "itemDescription", "modifiers" ],
@@ -1330,9 +1329,14 @@
       "templates": [ "itemDescription", "modifiers" ]
     },
     "navigator": {
-      "templates": [ "itemDescription", "modifiers" ],
-      "skillLevel": ""
-    },
+        "templates": ["itemDescription", "modifiers"],
+        "skillLevel": "",
+        "powerTest": {
+          "type": "characteristic",
+          "key": "",
+          "testValue": ""
+        }
+      },
     "psychicPower": {
       "templates": ["itemDescription"],
       "shortDescription": "",
